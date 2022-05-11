@@ -1,13 +1,14 @@
-<div>
+<div class="light-background">
   <mat-toolbar color="primary" class="mb-5">
     <span><h1>Forum Rule Engine Playground</h1></span>
     <span class="spacer"></span>
-    <button mat-icon-button>
+    <button mat-icon-button matTooltip="Show help dialog">
       <mat-icon>help_outline</mat-icon>
     </button>
   </mat-toolbar>
 
-  <div class="light-background columns m-5 p-5">
+  <!--- USER SELECTION AND WRITING POSTS  -->
+  <div class="columns m-5 is-variable is-8">
     <div class="column content">
       <h2>Select active user</h2>
       <p>
@@ -28,7 +29,9 @@
         class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center mb-5"
       >
         <h3>Create a new post</h3>
-        <button mat-raised-button color="accent">Post</button>
+        <button mat-raised-button color="accent" matTooltip="Publish post">
+          Post
+        </button>
       </div>
       <mat-form-field class="stretch-width" appearance="fill">
         <mat-label>Write some interesting content here...</mat-label>
@@ -38,10 +41,396 @@
           placeholder="I always like it when my morning starts with coffee..."
         ></textarea>
       </mat-form-field>
+
+      <mat-divider></mat-divider>
+
+      <!--- TERMINAL  -->
+      <div class="terminal-container">
+        <p>
+          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
+          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
+          felis.
+        </p>
+
+        <p>
+          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
+          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
+          felis.
+        </p>
+
+        <p>
+          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
+          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
+          felis.
+        </p>
+
+        <p>
+          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
+          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
+          felis.
+        </p>
+
+        <p>
+          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
+          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
+          felis.
+        </p>
+      </div>
     </div>
 
-    <div class="column content"></div>
+    <!--- POSTS BY USERS  -->
+    <div class="column content">
+      <h2>Posts (32)</h2>
+      <div class="posts-container">
+        <mat-card>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-content>
+            <p>Some content goes here...</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              matBadge="26"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              LIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="8"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              DISLIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="2"
+              matBadgeColor="accent"
+              color="warn"
+            >
+              REPORT
+            </button>
+          </mat-card-actions>
+        </mat-card>
 
-    <div class="column content"></div>
+        <mat-card>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-content>
+            <p>Some content goes here...</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              matBadge="26"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              LIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="8"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              DISLIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="2"
+              matBadgeColor="accent"
+              color="warn"
+            >
+              REPORT
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-content>
+            <p>Some content goes here...</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              matBadge="26"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              LIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="8"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              DISLIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="2"
+              matBadgeColor="accent"
+              color="warn"
+            >
+              REPORT
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-content>
+            <p>Some content goes here...</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              matBadge="26"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              LIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="8"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              DISLIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="2"
+              matBadgeColor="accent"
+              color="warn"
+            >
+              REPORT
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-content>
+            <p>Some content goes here...</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              matBadge="26"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              LIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="8"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              DISLIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="2"
+              matBadgeColor="accent"
+              color="warn"
+            >
+              REPORT
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-content>
+            <p>Some content goes here...</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button
+              mat-stroked-button
+              matBadge="26"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              LIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="8"
+              matBadgeColor="accent"
+              color="primary"
+            >
+              DISLIKE
+            </button>
+            <button
+              mat-stroked-button
+              matBadge="2"
+              matBadgeColor="accent"
+              color="warn"
+            >
+              REPORT
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+
+    <!--- USER STATUS  -->
+    <div class="column content">
+      <h1>User status</h1>
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar>
+            <ngx-avatar
+              name="
+            Genesis Rhapsodos"
+            ></ngx-avatar>
+          </div>
+          <mat-card-title>Genesis Rhapsodos</mat-card-title>
+          <mat-card-subtitle
+            >"My soul, corrupted by vengeance..."</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-chip-list>
+            <mat-chip class="example-box" color="accent"> Top User </mat-chip>
+
+            <mat-chip class="example-box" color="warn">
+              Potentialy Harmful
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn" selected>
+              Harmful User
+            </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar>
+            <ngx-avatar
+              name="
+            Angeal Hewley"
+            ></ngx-avatar>
+          </div>
+          <mat-card-title>Angeal Hewley</mat-card-title>
+          <mat-card-subtitle>"Embrace your dreams. "</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-chip-list>
+            <mat-chip class="example-box" color="accent" selected>
+              Top User
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn">
+              Potentialy Harmful
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn"> Harmful User </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar>
+            <ngx-avatar
+              name="
+              Sephiroth"
+            ></ngx-avatar>
+          </div>
+          <mat-card-title>Sephiroth</mat-card-title>
+          <mat-card-subtitle
+            >"This planet that is my birthright."</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-chip-list>
+            <mat-chip class="example-box" color="accent" selected>
+              Top User
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn">
+              Potentialy Harmful
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn" selected>
+              Harmful User
+            </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar>
+            <ngx-avatar
+              name="
+              Zack Fair"
+            ></ngx-avatar>
+          </div>
+          <mat-card-title>Zack Fair</mat-card-title>
+          <mat-card-subtitle
+            >"To be a hero, you need to have dreams... "</mat-card-subtitle
+          >
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-chip-list>
+            <mat-chip class="example-box" color="accent" selected>
+              Top User
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn">
+              Potentialy Harmful
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn"> Harmful User </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <div mat-card-avatar>
+            <ngx-avatar
+              name="
+              Cloud Strife"
+            ></ngx-avatar>
+          </div>
+          <mat-card-title>Cloud Strife</mat-card-title>
+          <mat-card-subtitle>"SOLDIER, First Class."</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-chip-list>
+            <mat-chip class="example-box" color="accent"> Top User </mat-chip>
+
+            <mat-chip class="example-box" color="warn">
+              Potentialy Harmful
+            </mat-chip>
+
+            <mat-chip class="example-box" color="warn"> Harmful User </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </div>
 </div>

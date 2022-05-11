@@ -6,7 +6,7 @@
 }
 
 mat-divider {
-  margin: 40px auto;
+  margin: 30px auto;
 }
 
 ::ng-deep .mat-focused .mat-form-field-label {
@@ -36,4 +36,34 @@ mat-divider {
 
 textarea {
   height: 100px;
+}
+
+mat-card-actions button {
+  margin-right: 15px !important;
+}
+
+mat-card {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.posts-container {
+  height: calc(100vh - 64px - 83px - 50px);
+  overflow-y: scroll;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap");
+
+.terminal-container {
+  height: calc(100vh - 64px - 546px - 50px);
+  overflow-y: scroll;
+  border-radius: 5px;
+  background-color: rgb(22, 22, 22);
+  padding: 10px;
+  font-family: "Ubuntu Mono";
+  color: rgb(86, 202, 206);
+}
+
+.terminal-container .timestamp {
+  color: rgb(188, 240, 241);
 }
