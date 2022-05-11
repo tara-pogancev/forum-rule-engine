@@ -10,11 +10,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class SampleApp {
+public class ForumRuleEngineApp {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
-		ApplicationContext ctx = SpringApplication.run(SampleApp.class, args);
+		ApplicationContext ctx = SpringApplication.run(ForumRuleEngineApp.class, args);
 	}
 
 	@Bean

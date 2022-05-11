@@ -1,0 +1,116 @@
+@use "~@angular/material" as mat;
+@import "/src/custom-theme.scss";
+
+@import "bulma/css/bulma.css";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+/* Colors */
+.light-background {
+  background-color: #f0eff5;
+}
+
+.gradient-background {
+  background: linear-gradient(#5c6bc0, #8e99f3);
+}
+
+.shadow {
+  box-shadow: 5px 5px 10px #00000050;
+}
+
+/* Fonts, Text */
+
+.is-light {
+  color: #fff;
+}
+
+/* Layout */
+.centered-content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.stretch-width {
+  width: 100%;
+}
+
+.stretch-height {
+  height: 100%;
+}
+
+.stretch-min-height {
+  min-height: 100%;
+}
+
+.page-container {
+  width: 100%;
+  min-height: 100%;
+  background-color: mat.get-color-from-palette(
+    $chat-application-accent,
+    "default"
+  ) !important;
+}
+
+/* Max width */
+.max-width-500 {
+  max-width: 500px;
+}
+
+.max-width-600 {
+  max-width: 600px;
+}
+
+.max-width-700 {
+  max-width: 700px;
+}
+
+.max-width-800 {
+  max-width: 800px;
+}
+
+.max-width-900 {
+  max-width: 900px;
+}
+
+.max-width-1200 {
+  max-width: 1200px;
+}
+
+/* Border */
+.container {
+  border-radius: 10px;
+}
+
+hr {
+  height: 0.8px;
+  opacity: 0.4;
+}
+
+/* Aditional */
+.clickable {
+  cursor: pointer;
+}
+
+.auto-margin {
+  margin: auto;
+}
+
+/* Hide scroll bar*/
+.main-container::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Hide scrollbar for IE and Edge */
+.main-container {
+  -ms-overflow-style: none !important;
+}
