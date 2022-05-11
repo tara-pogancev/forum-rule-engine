@@ -1,0 +1,47 @@
+<div>
+  <mat-toolbar color="primary" class="mb-5">
+    <span><h1>Forum Rule Engine Playground</h1></span>
+    <span class="spacer"></span>
+    <button mat-icon-button>
+      <mat-icon>help_outline</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="light-background columns m-5 p-5">
+    <div class="column content">
+      <h2>Select active user</h2>
+      <p>
+        Liking, disliking, reporting posts; as well as creating new ones will be
+        linked to this user's actions.
+      </p>
+      <mat-button-toggle-group>
+        <mat-button-toggle value="Genesis">Genesis</mat-button-toggle>
+        <mat-button-toggle value="Angeal">Angeal</mat-button-toggle>
+        <mat-button-toggle value="Sephiroth">Sephiroth</mat-button-toggle>
+        <mat-button-toggle value="Zack">Zack</mat-button-toggle>
+        <mat-button-toggle value="Cloud">Cloud</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <mat-divider></mat-divider>
+
+      <div
+        class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center mb-5"
+      >
+        <h3>Create a new post</h3>
+        <button mat-raised-button color="accent">Post</button>
+      </div>
+      <mat-form-field class="stretch-width" appearance="fill">
+        <mat-label>Write some interesting content here...</mat-label>
+        <textarea
+          color="accent"
+          matInput
+          placeholder="I always like it when my morning starts with coffee..."
+        ></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="column content"></div>
+
+    <div class="column content"></div>
+  </div>
+</div>

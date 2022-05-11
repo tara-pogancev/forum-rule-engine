@@ -56,7 +56,7 @@ body {
   width: 100%;
   min-height: 100%;
   background-color: mat.get-color-from-palette(
-    $chat-application-accent,
+    $application-accent,
     "default"
   ) !important;
 }
@@ -113,4 +113,8 @@ hr {
 /* Hide scrollbar for IE and Edge */
 .main-container {
   -ms-overflow-style: none !important;
+}
+
+body {
+  background-color: #f0eff5;
 }
