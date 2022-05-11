@@ -2,7 +2,11 @@
   <mat-toolbar color="primary" class="mb-5">
     <span><h1>Forum Rule Engine Playground</h1></span>
     <span class="spacer"></span>
-    <button mat-icon-button matTooltip="Show help dialog">
+    <button
+      mat-icon-button
+      matTooltip="Show help dialog"
+      (click)="openHelpDialog()"
+    >
       <mat-icon>help_outline</mat-icon>
     </button>
   </mat-toolbar>
@@ -84,9 +88,20 @@
       <div class="posts-container">
         <mat-card>
           <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
+          <mat-card-subtitle>25/18/22 18:32:54 </mat-card-subtitle>
           <mat-card-content>
             <p>Some content goes here...</p>
+            <mat-chip-list>
+              <mat-chip class="example-box" color="accent" selected>
+                Top Content
+              </mat-chip>
+
+              <mat-chip class="example-box" color="warn">
+                Poor Content
+              </mat-chip>
+
+              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
+            </mat-chip-list>
           </mat-card-content>
           <mat-card-actions>
             <button
@@ -108,7 +123,7 @@
             <button
               mat-stroked-button
               matBadge="2"
-              matBadgeColor="accent"
+              matBadgeColor="warn"
               color="warn"
             >
               REPORT
@@ -121,6 +136,17 @@
           <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
           <mat-card-content>
             <p>Some content goes here...</p>
+            <mat-chip-list>
+              <mat-chip class="example-box" color="accent">
+                Top Content
+              </mat-chip>
+
+              <mat-chip class="example-box" color="warn">
+                Poor Content
+              </mat-chip>
+
+              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
+            </mat-chip-list>
           </mat-card-content>
           <mat-card-actions>
             <button
@@ -142,7 +168,7 @@
             <button
               mat-stroked-button
               matBadge="2"
-              matBadgeColor="accent"
+              matBadgeColor="warn"
               color="warn"
             >
               REPORT
@@ -155,6 +181,17 @@
           <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
           <mat-card-content>
             <p>Some content goes here...</p>
+            <mat-chip-list>
+              <mat-chip class="example-box" color="accent">
+                Top Content
+              </mat-chip>
+
+              <mat-chip class="example-box" color="warn">
+                Poor Content
+              </mat-chip>
+
+              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
+            </mat-chip-list>
           </mat-card-content>
           <mat-card-actions>
             <button
@@ -176,7 +213,7 @@
             <button
               mat-stroked-button
               matBadge="2"
-              matBadgeColor="accent"
+              matBadgeColor="warn"
               color="warn"
             >
               REPORT
@@ -189,74 +226,17 @@
           <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
           <mat-card-content>
             <p>Some content goes here...</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-stroked-button
-              matBadge="26"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              LIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="8"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              DISLIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="2"
-              matBadgeColor="accent"
-              color="warn"
-            >
-              REPORT
-            </button>
-          </mat-card-actions>
-        </mat-card>
+            <mat-chip-list>
+              <mat-chip class="example-box" color="accent">
+                Top Content
+              </mat-chip>
 
-        <mat-card>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
-          <mat-card-content>
-            <p>Some content goes here...</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-stroked-button
-              matBadge="26"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              LIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="8"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              DISLIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="2"
-              matBadgeColor="accent"
-              color="warn"
-            >
-              REPORT
-            </button>
-          </mat-card-actions>
-        </mat-card>
+              <mat-chip class="example-box" color="warn">
+                Poor Content
+              </mat-chip>
 
-        <mat-card>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
-          <mat-card-content>
-            <p>Some content goes here...</p>
+              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
+            </mat-chip-list>
           </mat-card-content>
           <mat-card-actions>
             <button
@@ -278,7 +258,7 @@
             <button
               mat-stroked-button
               matBadge="2"
-              matBadgeColor="accent"
+              matBadgeColor="warn"
               color="warn"
             >
               REPORT
