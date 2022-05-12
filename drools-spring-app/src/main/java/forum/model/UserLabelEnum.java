@@ -1,0 +1,11 @@
+package forum.model;
+
+public enum UserLabelEnum {
+	TOP_USER,
+	COMMUNITY_CONTRIBUTOR,
+	POTENTIAL_SPAMMER,
+	SPAMMER,
+	HARMFUL_USER,
+	TEMPORARILY_SUSPENDED,
+	SUSPENDED,
+}

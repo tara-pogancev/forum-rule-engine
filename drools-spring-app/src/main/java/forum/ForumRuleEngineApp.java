@@ -1,5 +1,4 @@
-package sbnz.integracija.example;
-
+package forum;
 
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieScanner;
@@ -8,6 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+
+import forum.repository.PostRepository;
+import forum.repository.UserRepository;
 
 @SpringBootApplication
 public class ForumRuleEngineApp {
