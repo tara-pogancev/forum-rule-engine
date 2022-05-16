@@ -32,6 +32,10 @@ public class UserService {
 	
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();
-     }    
+     }
+
+	public User getById(String userId) {
+		return userRepository.getUserById(userId);
+	}    
 
 }

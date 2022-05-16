@@ -5,17 +5,32 @@ import forum.model.User;
 import forum.model.PostLabelEnum;
 import forum.model.UserLabelEnum;
 import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
 
 rule "More than 45 actions in a minute by user"
-    when
-        $d1: DislikePostEvent($uId: userId)
-        Number(intValue >= 10) from accumulate(
+    when        
+        $d1: DislikePostEvent($uId: userId)            
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
+        Number(intValue >= 4) from accumulate(
             $d2: DislikePostEvent(
             	userId == $uId, 
                 this meets[1m] $d1),
             count($d2)
         )
     then
-        System.out.println("WARNING: Spammer user. User " + $uId);
+        System.out.println("WARNING: Spammer user. User " + $u.getName());
+    	$u.addLabel(UserLabelEnum.SPAMMER);
+    	$u.update();
+    	update($u);
+        
 end
 
+rule "haha spammer"
+	when 
+		$u: User(userLabels.contains(UserLabelEnum.SPAMMER))		
+	then 		
+        System.out.println("haha spammer " + $u.getName());
+end
+        

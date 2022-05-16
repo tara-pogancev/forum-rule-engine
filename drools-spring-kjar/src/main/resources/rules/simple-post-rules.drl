@@ -1,0 +1,45 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
+
+rule "Post like"
+	salience 10
+	no-loop
+    when        
+        $e: LikePostEvent($pId: postId)            
+        $p: Post(postId == $pId)
+    then
+    	$p.likePost();
+    	update($p);
+end
+
+rule "Post dislike"
+	salience 10
+	no-loop
+    when        
+        $e: LikePostEvent($pId: postId)            
+        $p: Post(postId == $pId)
+    then
+    	$p.dislikePost();
+    	update($p);
+end
+
+rule "Post report"
+	salience 10
+	no-loop
+    when        
+        $e: LikePostEvent($pId: postId)            
+        $p: Post(postId == $pId)
+    then
+    	$p.reportPost();
+    	update($p);
+end
+
+        

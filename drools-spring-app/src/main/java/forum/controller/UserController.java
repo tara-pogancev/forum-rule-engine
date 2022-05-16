@@ -18,8 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-public class UserController {
-	
+public class UserController {	
 
 	@Autowired
 	private UserService userService;
@@ -27,6 +26,11 @@ public class UserController {
     @GetMapping()
     public List<User> getAll() {
        return userService.getAllUsers();
+    }
+    
+    @GetMapping("/{userId}")
+    public User getById(@PathVariable String userId) {
+       return userService.getById(userId);
     }
 
 }

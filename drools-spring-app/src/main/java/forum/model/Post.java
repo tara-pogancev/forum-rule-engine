@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.joda.time.DateTime;
+import org.kie.api.definition.type.Modifies;
 
+import forum.repository.PostRepository;
+import forum.repository.UserRepository;
 import lombok.Data;
 
 @Data
@@ -29,15 +32,17 @@ public class Post {
 		return username.toLowerCase() + timestamp.toString("yyyyDDmmhhMMss");
 	}
 	
+	@Modifies({ "likes" })
 	public void likePost() {
 		this.likes++; 
 	}
 
-	
+	@Modifies({ "dislikes" })
 	public void dislikePost() {
 		this.dislikes++; 
 	}
 	
+	@Modifies({ "reports" })
 	public void reportPost() {
 		this.reports++; 
 	}
@@ -124,15 +129,20 @@ public class Post {
 		this.postLabels = postLabels;
 	}
 	
+	@Modifies({ "postLabels" })
 	public void removeLabel(PostLabelEnum label) {
 		this.postLabels.remove(label);
 	}
 	
+	@Modifies({ "postLabels" })
 	public void addLabel(PostLabelEnum label) {
 		if (!this.postLabels.contains(label)) {
 			this.postLabels.add(label);
 		}
+	}	
+	
+	public void update() {
+		PostRepository.getInstance().updatePost(this);
 	}
-	
-	
+		
 }

@@ -3,6 +3,7 @@ package forum.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import forum.KieSessionSingleton;
 import forum.model.User;
 
 public class UserRepository {
@@ -21,6 +22,10 @@ public class UserRepository {
 		users.add(user3);
 		users.add(user4);
 		users.add(user5);
+		
+		for (User user : this.users) {
+			KieSessionSingleton.getInstance().insert(user);
+		}
 	}	
 	
 	private static UserRepository instance = new UserRepository();	

@@ -3,6 +3,7 @@ package forum.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import forum.KieSessionSingleton;
 import forum.model.Post;
 import forum.model.User;
 
@@ -16,7 +17,8 @@ public class PostRepository {
 		for (User user: userRepository.getAllUsers()) {
 			Post tempPost = new Post(user.getUsername(), "My name is "+ user.getName() +". This is my first post. It better be amazing!");
 			posts.add(tempPost);
-		}
+			KieSessionSingleton.getInstance().insert(tempPost);
+		}		
 		
 	}
 	
@@ -50,6 +52,10 @@ public class PostRepository {
 		}
 		
 		return null;
+	}
+	
+	public void create(Post post) {
+		this.posts.add(post);
 	}
 
 }

@@ -13,6 +13,8 @@ import forum.ForumRuleEngineApp;
 import forum.KieSessionSingleton;
 import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
+import forum.event.NewPostEvent;
+import forum.event.ReportPostEvent;
 import forum.model.Post;
 import forum.model.RulesResponse;
 import forum.repository.PostRepository;
@@ -33,27 +35,28 @@ public class PostService {
 		this.kieContainer = kieContainer;
 	}
 	
-	public Post getClassifiedPost(Post post) {
-		post = postRepository.getAllPosts().get(0);
-		
-		KieSession kieSession = kieContainer.newKieSession();
-		kieSession.insert(post);
-		
-		log.info("Firing all rules.");
-		kieSession.fireAllRules();
-		kieSession.dispose();
-		
-		log.info(post.toString());
-		
-		postRepository.updatePost(post);
-		return post;
+	public Post getById(String postId) {
+		return postRepository.getPostById(postId);
 	}
 	
     public List<Post> getAllPosts() {
         return postRepository.getAllPosts();
-     }    
+     }   
     
-    public RulesResponse dislikePost(String postId, String userId) {
+    public RulesResponse likePost(String userId, String postId) {
+    	RulesResponse retVal = new RulesResponse("");
+
+		KieSession kieSession = KieSessionSingleton.getInstance();
+    	
+		kieSession.insert(new LikePostEvent(userId, postId));
+		Integer ruleFireCount = kieSession.fireAllRules();
+		
+		log.info(ruleFireCount.toString());
+
+    	return retVal;
+    }
+    
+    public RulesResponse dislikePost(String userId, String postId) {
     	RulesResponse retVal = new RulesResponse("");
 
 		KieSession kieSession = KieSessionSingleton.getInstance();
@@ -62,9 +65,38 @@ public class PostService {
 		Integer ruleFireCount = kieSession.fireAllRules();
 		
 		log.info(ruleFireCount.toString());
-
+		
     	return retVal;
     }
-	
+
+	public RulesResponse reportPost(String userId, String postId) {
+    	RulesResponse retVal = new RulesResponse("");
+
+		KieSession kieSession = KieSessionSingleton.getInstance();
+    	
+		kieSession.insert(new ReportPostEvent(userId, postId));
+		Integer ruleFireCount = kieSession.fireAllRules();
+		
+		log.info(ruleFireCount.toString());
+		
+    	return retVal;
+	}
+
+	public RulesResponse create(Post newPost) {
+    	RulesResponse retVal = new RulesResponse("");
+
+		KieSession kieSession = KieSessionSingleton.getInstance();
+		
+		Post post = new Post(newPost.getPostOwnerId(), newPost.getPostContent());
+		postRepository.create(post);    	
+		kieSession.insert(post);
+		kieSession.insert(new NewPostEvent(post.getPostOwnerId()));
+		
+		Integer ruleFireCount = kieSession.fireAllRules();
+		
+		log.info(ruleFireCount.toString());
+		
+    	return retVal;
+	}
 
 }

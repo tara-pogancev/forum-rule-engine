@@ -4,11 +4,15 @@ import forum.model.Post;
 import forum.model.User;
 import forum.model.PostLabelEnum;
 import forum.model.UserLabelEnum;
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
 
 
 rule "Classify Post - TRENDING"
     when
-        $post: Post( likes <= 300, postContent != "trending" )
+        $post: Post( likes > 3, postContent != "trending" )
     then
         $post.setPostContent("trending");
         update($post);
