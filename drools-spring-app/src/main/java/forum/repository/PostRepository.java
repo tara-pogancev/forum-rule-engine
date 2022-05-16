@@ -14,7 +14,7 @@ public class PostRepository {
 		UserRepository userRepository = UserRepository.getInstance();
 		
 		for (User user: userRepository.getAllUsers()) {
-			Post tempPost = new Post(user.username, "My name is "+ user.name +". This is my first post. It better be amazing!");
+			Post tempPost = new Post(user.getUsername(), "My name is "+ user.getName() +". This is my first post. It better be amazing!");
 			posts.add(tempPost);
 		}
 		
@@ -32,7 +32,7 @@ public class PostRepository {
 	
 	public Post getPostById(String id) {
 		for (Post post: posts) {
-			if (post.postId.toLowerCase().equals(id.toLowerCase())) {
+			if (post.getPostId().toLowerCase().equals(id.toLowerCase())) {
 				return post;
 			}
 		}
@@ -42,7 +42,7 @@ public class PostRepository {
 	
 	public Post updatePost(Post post) {
 		for (Post postFromList: posts) {
-			if (postFromList.postId.toLowerCase().equals(post.postId.toLowerCase())) {
+			if (postFromList.getPostId().toLowerCase().equals(post.getPostId().toLowerCase())) {
 				int index = posts.indexOf(postFromList);
 				posts.set(index, post);
 				return post;

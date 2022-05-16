@@ -1,0 +1,15 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+
+
+rule "Classify Post - TRENDING"
+    when
+        $post: Post( likes <= 300, postContent != "trending" )
+    then
+        $post.setPostContent("trending");
+        update($post);
+end

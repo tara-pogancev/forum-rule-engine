@@ -1,0 +1,6 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;

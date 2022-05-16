@@ -35,7 +35,7 @@ public class UserRepository {
 	
 	public User getUserById(String id) {
 		for (User user: users) {
-			if (user.username.toLowerCase().equals(id.toLowerCase())) {
+			if (user.getUsername().toLowerCase().equals(id.toLowerCase())) {
 				return user;
 			}
 		}
@@ -45,7 +45,7 @@ public class UserRepository {
 	
 	public User updateUser(User user) {
 		for (User userFromList: users) {
-			if (userFromList.username.toLowerCase().equals(user.username.toLowerCase())) {
+			if (userFromList.getUsername().toLowerCase().equals(user.getUsername().toLowerCase())) {
 				int index = users.indexOf(userFromList);
 				users.set(index, user);
 				return user;
