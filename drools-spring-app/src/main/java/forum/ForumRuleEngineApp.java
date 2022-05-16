@@ -23,6 +23,9 @@ public class ForumRuleEngineApp {
 				.newKieContainer(ks.newReleaseId("forum", "drools-spring-kjar", "0.0.1-SNAPSHOT"));		
 		KieScanner kScanner = ks.newKieScanner(kContainer);
 		kScanner.start(10_000);
+		new KieSessionSingleton(kContainer);
 		return kContainer;
 	}
+	
+	
 }

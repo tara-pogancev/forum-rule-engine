@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import forum.ForumRuleEngineApp;
+import forum.KieSessionSingleton;
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
 import forum.model.Post;
+import forum.model.RulesResponse;
 import forum.repository.PostRepository;
 import forum.repository.UserRepository;
 
@@ -48,6 +52,19 @@ public class PostService {
     public List<Post> getAllPosts() {
         return postRepository.getAllPosts();
      }    
+    
+    public RulesResponse dislikePost(String postId, String userId) {
+    	RulesResponse retVal = new RulesResponse("");
+
+		KieSession kieSession = KieSessionSingleton.getInstance();
+    	
+		kieSession.insert(new DislikePostEvent(userId, postId));
+		Integer ruleFireCount = kieSession.fireAllRules();
+		
+		log.info(ruleFireCount.toString());
+
+    	return retVal;
+    }
 	
 
 }
