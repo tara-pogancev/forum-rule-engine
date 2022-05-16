@@ -19,9 +19,8 @@ import forum.repository.UserRepository;
 public class UserService {
 	
 	private static Logger log = LoggerFactory.getLogger(ForumRuleEngineApp.class);
-
 	private final KieContainer kieContainer;
-	
+
 	private PostRepository postRepository = PostRepository.getInstance();
 	private UserRepository userRepository = UserRepository.getInstance();
 	

@@ -18,7 +18,12 @@ public class PostRepository {
 			Post tempPost = new Post(user.getUsername(), "My name is "+ user.getName() +". This is my first post. It better be amazing!");
 			posts.add(tempPost);
 			KieSessionSingleton.getInstance().insert(tempPost);
-		}		
+		}	
+		
+		Post tempPost = new Post("Genesis", "Test post.");
+		tempPost.setPostId("1");
+		posts.add(tempPost);
+		KieSessionSingleton.getInstance().insert(tempPost);
 		
 	}
 	

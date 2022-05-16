@@ -11,7 +11,7 @@ import forum.event.NewPostEvent;
 
 rule "Post like"
 	salience 10
-	no-loop
+	lock-on-active
     when        
         $e: LikePostEvent($pId: postId)            
         $p: Post(postId == $pId)
@@ -22,9 +22,9 @@ end
 
 rule "Post dislike"
 	salience 10
-	no-loop
+	lock-on-active
     when        
-        $e: LikePostEvent($pId: postId)            
+        $e: DislikePostEvent($pId: postId)            
         $p: Post(postId == $pId)
     then
     	$p.dislikePost();
@@ -33,9 +33,9 @@ end
 
 rule "Post report"
 	salience 10
-	no-loop
+	lock-on-active
     when        
-        $e: LikePostEvent($pId: postId)            
+        $e: ReportPostEvent($pId: postId)            
         $p: Post(postId == $pId)
     then
     	$p.reportPost();

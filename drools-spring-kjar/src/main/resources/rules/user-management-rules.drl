@@ -13,7 +13,7 @@ rule "More than 45 actions in a minute by user"
     when        
         $d1: DislikePostEvent($uId: userId)            
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
-        Number(intValue >= 4) from accumulate(
+        Number(intValue >= 45) from accumulate(
             $d2: DislikePostEvent(
             	userId == $uId, 
                 this meets[1m] $d1),

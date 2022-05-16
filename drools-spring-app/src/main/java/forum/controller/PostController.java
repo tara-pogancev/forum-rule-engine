@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import forum.controller.dto.PostDto;
 import forum.model.Post;
 import forum.model.RulesResponse;
 import forum.service.PostService;
@@ -50,7 +51,7 @@ public class PostController {
     }
     
     @PostMapping()
-    public RulesResponse createPost(@RequestBody Post newPost) {
+    public RulesResponse createPost(@RequestBody PostDto newPost) {
        return postService.create(newPost);
     }
 
