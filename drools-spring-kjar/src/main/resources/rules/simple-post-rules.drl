@@ -9,6 +9,7 @@ import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
 
 import forum.event.label.TopUserLabelEvent;
 import forum.event.label.CommunityContributorUserLabelEvent;
@@ -26,9 +27,10 @@ rule "Post like"
 	salience 10
 	lock-on-active
     when        
-        $e: LikePostEvent($pId: postId)            
+        $e: LikePostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
     then
+    	insert(new DefaultUserActionEvent($uId));
     	$p.likePost();
     	update($p);
 end
@@ -37,9 +39,10 @@ rule "Post dislike"
 	salience 10
 	lock-on-active
     when        
-        $e: DislikePostEvent($pId: postId)            
+        $e: DislikePostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
-    then
+    then    
+    	insert(new DefaultUserActionEvent($uId));
     	$p.dislikePost();
     	update($p);
 end
@@ -48,9 +51,10 @@ rule "Post report"
 	salience 10
 	lock-on-active
     when        
-        $e: ReportPostEvent($pId: postId)            
+        $e: ReportPostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
     then
+        insert(new DefaultUserActionEvent($uId));
     	$p.reportPost();
     	update($p);
 end

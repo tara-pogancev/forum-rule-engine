@@ -9,6 +9,7 @@ import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
 
 import forum.event.label.TopUserLabelEvent;
 import forum.event.label.CommunityContributorUserLabelEvent;

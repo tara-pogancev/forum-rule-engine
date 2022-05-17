@@ -16,8 +16,8 @@ export class MainPageComponent implements OnInit {
   users: User[] = [];
   posts: Post[] = [];
   logs: RulesResponse[] = [];
-  activeUsername: string = 'Sephiroth';
-  newPostContent: string = 'Genesis';
+  activeUsername: string = 'Genesis';
+  newPostContent: string = '';
 
   constructor(
     public dialog: MatDialog,

@@ -9,6 +9,7 @@ import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
 
 import forum.event.label.TopUserLabelEvent;
 import forum.event.label.CommunityContributorUserLabelEvent;
@@ -44,10 +45,10 @@ end
 
 rule "More than 45 actions in a minute by user"
     when        
-        $d1: DislikePostEvent($uId: userId)            
+        $d1: DefaultUserActionEvent($uId: userId)            
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
         Number(intValue >= 45) from accumulate(
-            $d2: DislikePostEvent(
+            $d2: DefaultUserActionEvent(
             	userId == $uId, 
                 this meets[1m] $d1),
             count($d2)

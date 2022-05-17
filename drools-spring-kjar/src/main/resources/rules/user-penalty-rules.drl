@@ -9,6 +9,7 @@ import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
 
 import forum.event.label.TopUserLabelEvent;
 import forum.event.label.CommunityContributorUserLabelEvent;
@@ -53,6 +54,17 @@ rule "Suspended user (5x harmful posts)"
         	$p: Post(postOwnerId == $uId, postLabels.contains(PostLabelEnum.HARMFUL)),
         	count($p)
         )
+    then      
+        insert(new SuspendedUserLabelEvent($uId));       
+    	$u.addLabel(UserLabelEnum.SUSPENDED);
+    	update($u);        
+end
+
+rule "Suspended user (spammer after harmful label)"
+    when       
+        $e1: HarmfulUserLabelEvent($uId: userId)         
+        $e2: SpammerUserLabelEvent(userId == $uId, this after $e1) 
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SUSPENDED))   
     then      
         insert(new SuspendedUserLabelEvent($uId));       
     	$u.addLabel(UserLabelEnum.SUSPENDED);
