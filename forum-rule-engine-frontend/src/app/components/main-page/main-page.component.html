@@ -21,13 +21,23 @@
       </p>
       <mat-button-toggle-group [(ngModel)]="activeUsername">
         <mat-button-toggle
-          *ngFor="let user of users"
-          [value]="user.username"
-          [disabled]="
-            user.userLabels.indexOf('SUSPENDED') > -1 ||
-            user.userLabels.indexOf('TEMPORARILY_SUSPENDED') > -1
-          "
-          >{{ user.username }}</mat-button-toggle
+          value="Genesis"
+          [disabled]="isUserSuspended(users[0])"
+          >Genesis</mat-button-toggle
+        >
+        <mat-button-toggle value="Angeal" [disabled]="isUserSuspended(users[1])"
+          >Angeal</mat-button-toggle
+        >
+        <mat-button-toggle
+          value="Sephiroth"
+          [disabled]="isUserSuspended(users[2])"
+          >Sephiroth</mat-button-toggle
+        >
+        <mat-button-toggle value="Zack" [disabled]="isUserSuspended(users[3])"
+          >Zack</mat-button-toggle
+        >
+        <mat-button-toggle value="Cloud" [disabled]="isUserSuspended(users[4])"
+          >Cloud</mat-button-toggle
         >
       </mat-button-toggle-group>
 

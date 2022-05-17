@@ -16,8 +16,8 @@ export class MainPageComponent implements OnInit {
   users: User[] = [];
   posts: Post[] = [];
   logs: RulesResponse[] = [];
-  activeUsername: string = 'Genesis';
-  newPostContent: string = '';
+  activeUsername: string = 'Sephiroth';
+  newPostContent: string = 'Genesis';
 
   constructor(
     public dialog: MatDialog,
@@ -35,6 +35,17 @@ export class MainPageComponent implements OnInit {
   refreshAllUsers() {
     this.userService.getAll().subscribe((data) => {
       this.users = data;
+      var millisecondsToWait = 10;
+      setTimeout(() => {
+        if (this.isActiveUserSuspended()) {
+          for (let user of this.users) {
+            if (!this.isUserSuspended(user)) {
+              this.activeUsername = user.username;
+              break;
+            }
+          }
+        }
+      }, millisecondsToWait);
     });
   }
 
@@ -130,6 +141,7 @@ export class MainPageComponent implements OnInit {
       newPost.postOwnerId = this.activeUsername;
       newPost.postContent = this.newPostContent;
       this.postService.createPost(newPost).subscribe((data) => {
+        this.newPostContent = '';
         this.refreshAllPosts();
         if (data.message != null) {
           this.addLog(data.message);
@@ -144,10 +156,26 @@ export class MainPageComponent implements OnInit {
     setTimeout(() => {
       this.updateScroll();
     }, millisecondsToWait);
+    if (this.shouldRefresh(message)) {
+      this.refreshAllPosts();
+      this.refreshAllUsers();
+    }
   }
 
   updateScroll() {
     var element = document.getElementById('log-terminal')!;
     element.scrollTop = element.scrollHeight;
+  }
+
+  shouldRefresh(message: string) {
+    if (
+      message.startsWith('1 rules fired: Post like') ||
+      message.startsWith('1 rules fired: Post dislike') ||
+      message.startsWith('1 rules fired: Post report')
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

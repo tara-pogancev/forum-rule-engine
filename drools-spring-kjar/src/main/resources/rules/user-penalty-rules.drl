@@ -21,3 +21,48 @@ import forum.event.label.TrendingPostLabelEvent;
 import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
+
+rule "Temorarily suspended user"
+    when        
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER), !userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))            
+        not $e: SuspendedUserLabelEvent(userId == $uId)
+    then      
+        insert(new TemporarilySuspendedUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
+    	update($u);        
+end
+
+rule "Suspended user (5x spammer)"
+    when        
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER), !userLabels.contains(UserLabelEnum.SUSPENDED))            
+        not $e1: SuspendedUserLabelEvent(userId == $uId)
+        Number(intValue >= 5) from accumulate (
+        	$e2: TemporarilySuspendedUserLabelEvent(userId == $uId),
+        	count($e2)
+        )
+    then      
+        insert(new SuspendedUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.SUSPENDED);
+    	update($u);        
+end
+
+rule "Suspended user (5x harmful posts)"
+    when        
+        $u: User($uId: username, !userLabels.contains(UserLabelEnum.SUSPENDED))   
+        Number(intValue >= 5) from accumulate (
+        	$p: Post(postOwnerId == $uId, postLabels.contains(PostLabelEnum.HARMFUL)),
+        	count($p)
+        )
+    then      
+        insert(new SuspendedUserLabelEvent($uId));       
+    	$u.addLabel(UserLabelEnum.SUSPENDED);
+    	update($u);        
+end
+
+rule "Revoke temporarily suspended label (suspended)"
+    when        
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.SUSPENDED), userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))   
+    then           
+    	$u.removeLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
+    	update($u);        
+end

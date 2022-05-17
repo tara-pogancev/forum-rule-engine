@@ -22,6 +22,26 @@ import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
 
+rule "Revoke top user label (Spammer)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.TOP_USER), userLabels.contains(UserLabelEnum.SPAMMER))
+        $e: TopUserLabelEvent(userId == $uId)
+    then     
+        delete($e);
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke community contributor label (Spammer)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), userLabels.contains(UserLabelEnum.SPAMMER))
+        $e: CommunityContributorUserLabelEvent(userId == $uId)
+    then     
+        delete($e);
+    	$u.removeLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
+    	update($u);        
+end
+
 rule "More than 45 actions in a minute by user"
     when        
         $d1: DislikePostEvent($uId: userId)            
@@ -36,12 +56,35 @@ rule "More than 45 actions in a minute by user"
         System.out.println("WARNING: Spammer user. User " + $u.getName());        
         insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
-    	// $u.update();
-    	update($u);
-        
+    	update($u);        
 end
 
+rule "More than 10 posts in 5 minutes"
+    when        
+        $e1: NewPostEvent($uId: userId)            
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
+        Number(intValue >= 10) from accumulate(
+            $e2: NewPostEvent(
+            	userId == $uId, 
+                this meets[5m] $e1),
+            count($e2)
+        )
+    then
+        System.out.println("WARNING: Spammer user. User " + $u.getName());        
+        insert(new SpammerUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.SPAMMER);
+    	update($u);        
+end
 
-
+rule "Label user as harmful"
+    when        
+        $p: Post($uId: postOwnerId, postLabels.contains(PostLabelEnum.HARMFUL))            
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.HARMFUL_USER))
+    then
+        System.out.println("WARNING: Harmful user. User " + $u.getName());        
+        insert(new HarmfulUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.HARMFUL_USER);
+    	update($u);        
+end
 
         
