@@ -140,10 +140,10 @@ export class MainPageComponent implements OnInit {
 
   addLog(message: string) {
     this.logs.push(new RulesResponse(message));
-    var millisecondsToWait = 500;
-    /*setTimeout( () => {
+    var millisecondsToWait = 50;
+    setTimeout(() => {
       this.updateScroll();
-    }, millisecondsToWait); */
+    }, millisecondsToWait);
   }
 
   updateScroll() {
