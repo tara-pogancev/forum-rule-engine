@@ -23,7 +23,7 @@ public class RulesResponse {
 		super();
 		if (firedRules.size() == 0) {
 			this.message = null;
-		} else if (firedRules.size() == 0) {
+		} else if (firedRules.size() == 1) {
 			this.message = "1 rule fired: " + firedRules.get(0);
 		} else {
 			this.message = firedRules.size() + " rules fired: ";
