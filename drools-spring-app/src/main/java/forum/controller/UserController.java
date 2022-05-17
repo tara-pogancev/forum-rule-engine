@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import forum.model.Post;
 import forum.model.User;
-import forum.repository.UserRepository;
-import forum.service.PostService;
 import forum.service.UserService;
 import lombok.RequiredArgsConstructor;
 

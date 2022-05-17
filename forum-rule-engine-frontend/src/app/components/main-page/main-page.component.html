@@ -19,12 +19,16 @@
         Liking, disliking, reporting posts; as well as creating new ones will be
         linked to this user's actions.
       </p>
-      <mat-button-toggle-group>
-        <mat-button-toggle value="Genesis">Genesis</mat-button-toggle>
-        <mat-button-toggle value="Angeal">Angeal</mat-button-toggle>
-        <mat-button-toggle value="Sephiroth">Sephiroth</mat-button-toggle>
-        <mat-button-toggle value="Zack">Zack</mat-button-toggle>
-        <mat-button-toggle value="Cloud">Cloud</mat-button-toggle>
+      <mat-button-toggle-group [(ngModel)]="activeUsername">
+        <mat-button-toggle
+          *ngFor="let user of users"
+          [value]="user.username"
+          [disabled]="
+            user.userLabels.indexOf('SUSPENDED') > -1 ||
+            user.userLabels.indexOf('TEMPORARILY_SUSPENDED') > -1
+          "
+          >{{ user.username }}</mat-button-toggle
+        >
       </mat-button-toggle-group>
 
       <mat-divider></mat-divider>
@@ -33,13 +37,20 @@
         class="is-flex is-flex-direction-row is-justify-content-space-between is-align-items-center mb-5"
       >
         <h3>Create a new post</h3>
-        <button mat-raised-button color="accent" matTooltip="Publish post">
+        <button
+          mat-raised-button
+          color="accent"
+          matTooltip="Publish post"
+          (click)="createPost()"
+          [disabled]="isActiveUserSuspended() || newPostContent == ''"
+        >
           Post
         </button>
       </div>
       <mat-form-field class="stretch-width" appearance="fill">
         <mat-label>Write some interesting content here...</mat-label>
         <textarea
+          [(ngModel)]="newPostContent"
           color="accent"
           matInput
           placeholder="I always like it when my morning starts with coffee..."
@@ -49,217 +60,78 @@
       <mat-divider></mat-divider>
 
       <!--- TERMINAL  -->
-      <div class="terminal-container">
-        <p>
-          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
-          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
-          felis.
-        </p>
-
-        <p>
-          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
-          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
-          felis.
-        </p>
-
-        <p>
-          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
-          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
-          felis.
-        </p>
-
-        <p>
-          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
-          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
-          felis.
-        </p>
-
-        <p>
-          <span class="timestamp">[16/05/22 16:20:52]</span> Lorem ipsum dolor
-          sit amet, consectetur adipiscing elit. Pellentesque sit amet tristique
-          felis.
+      <div class="terminal-container" id="log-terminal">
+        <p *ngFor="let log of logs">
+          <span class="timestamp"
+            >[{{ log.timestamp | date: "yyyy-MM-dd hh:mm:ss" }}]</span
+          >
+          {{ log.message }}
         </p>
       </div>
     </div>
 
     <!--- POSTS BY USERS  -->
     <div class="column content">
-      <h2>Posts (32)</h2>
+      <h2>Posts ({{ posts.length }})</h2>
       <div class="posts-container">
-        <mat-card>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32:54 </mat-card-subtitle>
+        <mat-card *ngFor="let post of posts">
+          <mat-card-title>{{ post.postOwnerId }}</mat-card-title>
+          <mat-card-subtitle>{{
+            post.timestamp | date: "medium"
+          }}</mat-card-subtitle>
           <mat-card-content>
-            <p>Some content goes here...</p>
+            <p>{{ post.postContent }}</p>
             <mat-chip-list>
-              <mat-chip class="example-box" color="accent" selected>
+              <mat-chip
+                class="example-box"
+                color="accent"
+                [selected]="post.postLabels.indexOf('TOP_CONTENT') > -1"
+              >
                 Top Content
               </mat-chip>
 
-              <mat-chip class="example-box" color="warn">
+              <mat-chip
+                class="example-box"
+                color="warn"
+                [selected]="post.postLabels.indexOf('POOR_CONTENT') > -1"
+              >
                 Poor Content
               </mat-chip>
 
-              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
+              <mat-chip
+                class="example-box"
+                color="warn"
+                [selected]="post.postLabels.indexOf('HARMFUL') > -1"
+              >
+                Harmful
+              </mat-chip>
             </mat-chip-list>
           </mat-card-content>
           <mat-card-actions>
             <button
               mat-stroked-button
-              matBadge="26"
+              [matBadge]="post.likes"
               matBadgeColor="accent"
               color="primary"
+              (click)="likePost(post.postId)"
             >
               LIKE
             </button>
             <button
               mat-stroked-button
-              matBadge="8"
+              [matBadge]="post.dislikes"
               matBadgeColor="accent"
               color="primary"
+              (click)="dislikePost(post.postId)"
             >
               DISLIKE
             </button>
             <button
               mat-stroked-button
-              matBadge="2"
+              [matBadge]="post.reports"
               matBadgeColor="warn"
               color="warn"
-            >
-              REPORT
-            </button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
-          <mat-card-content>
-            <p>Some content goes here...</p>
-            <mat-chip-list>
-              <mat-chip class="example-box" color="accent">
-                Top Content
-              </mat-chip>
-
-              <mat-chip class="example-box" color="warn">
-                Poor Content
-              </mat-chip>
-
-              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
-            </mat-chip-list>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-stroked-button
-              matBadge="26"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              LIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="8"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              DISLIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="2"
-              matBadgeColor="warn"
-              color="warn"
-            >
-              REPORT
-            </button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
-          <mat-card-content>
-            <p>Some content goes here...</p>
-            <mat-chip-list>
-              <mat-chip class="example-box" color="accent">
-                Top Content
-              </mat-chip>
-
-              <mat-chip class="example-box" color="warn">
-                Poor Content
-              </mat-chip>
-
-              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
-            </mat-chip-list>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-stroked-button
-              matBadge="26"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              LIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="8"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              DISLIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="2"
-              matBadgeColor="warn"
-              color="warn"
-            >
-              REPORT
-            </button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle>25/18/22 18:32</mat-card-subtitle>
-          <mat-card-content>
-            <p>Some content goes here...</p>
-            <mat-chip-list>
-              <mat-chip class="example-box" color="accent">
-                Top Content
-              </mat-chip>
-
-              <mat-chip class="example-box" color="warn">
-                Poor Content
-              </mat-chip>
-
-              <mat-chip class="example-box" color="warn"> Harmful </mat-chip>
-            </mat-chip-list>
-          </mat-card-content>
-          <mat-card-actions>
-            <button
-              mat-stroked-button
-              matBadge="26"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              LIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="8"
-              matBadgeColor="accent"
-              color="primary"
-            >
-              DISLIKE
-            </button>
-            <button
-              mat-stroked-button
-              matBadge="2"
-              matBadgeColor="warn"
-              color="warn"
+              (click)="reportPost(post.postId)"
             >
               REPORT
             </button>
@@ -271,143 +143,93 @@
     <!--- USER STATUS  -->
     <div class="column content">
       <h1>User status</h1>
-      <mat-card>
+      <mat-card *ngFor="let user of users">
         <mat-card-header>
           <div mat-card-avatar>
-            <ngx-avatar
-              name="
-            Genesis Rhapsodos"
-            ></ngx-avatar>
+            <ngx-avatar [name]="user.name"></ngx-avatar>
           </div>
-          <mat-card-title>Genesis Rhapsodos</mat-card-title>
-          <mat-card-subtitle
+          <mat-card-title>{{ user.name }}</mat-card-title>
+          <mat-card-subtitle *ngIf="user.username == 'Genesis'"
             >"My soul, corrupted by vengeance..."</mat-card-subtitle
           >
-        </mat-card-header>
-
-        <mat-card-content>
-          <mat-chip-list>
-            <mat-chip class="example-box" color="accent"> Top User </mat-chip>
-
-            <mat-chip class="example-box" color="warn">
-              Potentialy Harmful
-            </mat-chip>
-
-            <mat-chip class="example-box" color="warn" selected>
-              Harmful User
-            </mat-chip>
-          </mat-chip-list>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-header>
-          <div mat-card-avatar>
-            <ngx-avatar
-              name="
-            Angeal Hewley"
-            ></ngx-avatar>
-          </div>
-          <mat-card-title>Angeal Hewley</mat-card-title>
-          <mat-card-subtitle>"Embrace your dreams. "</mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-          <mat-chip-list>
-            <mat-chip class="example-box" color="accent" selected>
-              Top User
-            </mat-chip>
-
-            <mat-chip class="example-box" color="warn">
-              Potentialy Harmful
-            </mat-chip>
-
-            <mat-chip class="example-box" color="warn"> Harmful User </mat-chip>
-          </mat-chip-list>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-header>
-          <div mat-card-avatar>
-            <ngx-avatar
-              name="
-              Sephiroth"
-            ></ngx-avatar>
-          </div>
-          <mat-card-title>Sephiroth</mat-card-title>
-          <mat-card-subtitle
+          <mat-card-subtitle *ngIf="user.username == 'Angeal'"
+            >"Embrace your dreams."</mat-card-subtitle
+          >
+          <mat-card-subtitle *ngIf="user.username == 'Sephiroth'"
             >"This planet that is my birthright."</mat-card-subtitle
           >
-        </mat-card-header>
-
-        <mat-card-content>
-          <mat-chip-list>
-            <mat-chip class="example-box" color="accent" selected>
-              Top User
-            </mat-chip>
-
-            <mat-chip class="example-box" color="warn">
-              Potentialy Harmful
-            </mat-chip>
-
-            <mat-chip class="example-box" color="warn" selected>
-              Harmful User
-            </mat-chip>
-          </mat-chip-list>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-header>
-          <div mat-card-avatar>
-            <ngx-avatar
-              name="
-              Zack Fair"
-            ></ngx-avatar>
-          </div>
-          <mat-card-title>Zack Fair</mat-card-title>
-          <mat-card-subtitle
-            >"To be a hero, you need to have dreams... "</mat-card-subtitle
+          <mat-card-subtitle *ngIf="user.username == 'Zack'"
+            >"To be a hero, you need to have dreams..."</mat-card-subtitle
+          >
+          <mat-card-subtitle *ngIf="user.username == 'Cloud'"
+            >"SOLDIER, First Class"</mat-card-subtitle
           >
         </mat-card-header>
 
         <mat-card-content>
           <mat-chip-list>
-            <mat-chip class="example-box" color="accent" selected>
+            <mat-chip
+              class="example-box"
+              color="accent"
+              selected
+              *ngIf="user.userLabels.indexOf('TOP_USER') > -1"
+            >
               Top User
             </mat-chip>
 
-            <mat-chip class="example-box" color="warn">
-              Potentialy Harmful
+            <mat-chip
+              class="example-box"
+              color="accent"
+              selected
+              *ngIf="user.userLabels.indexOf('COMMUNITY_CONTRIBUTOR') > -1"
+            >
+              Community Contributor
             </mat-chip>
 
-            <mat-chip class="example-box" color="warn"> Harmful User </mat-chip>
-          </mat-chip-list>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-header>
-          <div mat-card-avatar>
-            <ngx-avatar
-              name="
-              Cloud Strife"
-            ></ngx-avatar>
-          </div>
-          <mat-card-title>Cloud Strife</mat-card-title>
-          <mat-card-subtitle>"SOLDIER, First Class."</mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-          <mat-chip-list>
-            <mat-chip class="example-box" color="accent"> Top User </mat-chip>
-
-            <mat-chip class="example-box" color="warn">
-              Potentialy Harmful
+            <mat-chip
+              class="example-box"
+              color="warn"
+              selected
+              *ngIf="user.userLabels.indexOf('POTENTIAL_SPAMMER') > -1"
+            >
+              Potential Spammer
             </mat-chip>
 
-            <mat-chip class="example-box" color="warn"> Harmful User </mat-chip>
+            <mat-chip
+              class="example-box"
+              color="warn"
+              selected
+              *ngIf="user.userLabels.indexOf('SPAMMER') > -1"
+            >
+              Spammer
+            </mat-chip>
+
+            <mat-chip
+              class="example-box"
+              color="warn"
+              selected
+              *ngIf="user.userLabels.indexOf('HARMFUL_USER') > -1"
+            >
+              Harmful User
+            </mat-chip>
+
+            <mat-chip
+              class="example-box"
+              color="warn"
+              selected
+              *ngIf="user.userLabels.indexOf('TEMPORARILY_SUSPENDED') > -1"
+            >
+              Temporarily Suspended
+            </mat-chip>
+
+            <mat-chip
+              class="example-box"
+              color="warn"
+              selected
+              *ngIf="user.userLabels.indexOf('SUSPENDED') > -1"
+            >
+              Suspended
+            </mat-chip>
           </mat-chip-list>
         </mat-card-content>
       </mat-card>

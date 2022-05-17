@@ -1,12 +1,11 @@
 package forum.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.drools.core.WorkingMemory;
 import org.drools.core.event.DefaultAgendaEventListener;
 import org.kie.api.event.rule.AfterMatchFiredEvent;
-import org.kie.api.event.rule.AgendaEventListener;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.slf4j.Logger;
@@ -45,7 +44,9 @@ public class PostService {
 	}
 	
     public List<Post> getAllPosts() {
-        return postRepository.getAllPosts();
+    	List<Post> retVal = postRepository.getAllPosts();
+    	Collections.reverse(retVal);
+        return retVal;
      }   
     
     public RulesResponse likePost(String userId, String postId) {   

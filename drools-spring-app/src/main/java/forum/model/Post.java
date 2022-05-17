@@ -1,14 +1,14 @@
 package forum.model;
 
 import java.util.List;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-import org.joda.time.DateTime;
 import org.kie.api.definition.type.Modifies;
 
 import forum.repository.PostRepository;
-import forum.repository.UserRepository;
 import lombok.Data;
 
 @Data
@@ -17,19 +17,23 @@ public class Post {
 	private String postId;
 	private String postOwnerId;
 	private String postContent;
-	private DateTime timestamp;
+	private Date timestamp;
 	private Integer likes = 0;
 	private Integer dislikes = 0;
 	private Integer reports = 0;
 	private List<PostLabelEnum> postLabels = new ArrayList<>();
 	
 	public static String generatePostId(String username) {
-		DateTime currentTime = new DateTime();
-		return username.toLowerCase() + currentTime.toString("yyyyDDmmhhMMss");
+		Date currentTime = new Date();
+		DateFormat dateFormat = new SimpleDateFormat("yyyyDDmmhhMMss");  
+		String strDate = dateFormat.format(currentTime); 
+		return username.toLowerCase() + strDate;
 	}
 	
-	public static String generatePostId(String username, DateTime timestamp) {
-		return username.toLowerCase() + timestamp.toString("yyyyDDmmhhMMss");
+	public static String generatePostId(String username, Date timestamp) {
+		DateFormat dateFormat = new SimpleDateFormat("yyyyDDmmhhMMss");  
+		String strDate = dateFormat.format(timestamp); 
+		return username.toLowerCase() + strDate;
 	}
 	
 	@Modifies({ "likes" })
@@ -47,7 +51,7 @@ public class Post {
 		this.reports++; 
 	}
 
-	public Post(String postOwnerId, String postContent, DateTime timestamp) {
+	public Post(String postOwnerId, String postContent, Date timestamp) {
 		super();
 		this.postOwnerId = postOwnerId;
 		this.postContent = postContent;
@@ -62,7 +66,7 @@ public class Post {
 		this.postContent = postContent;
 
 		this.postId = generatePostId(postOwnerId);
-		this.timestamp = new DateTime();
+		this.timestamp = new Date();
 	}
 
 	public String getPostId() {
@@ -89,11 +93,11 @@ public class Post {
 		this.postContent = postContent;
 	}
 
-	public DateTime getTimestamp() {
+	public Date getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(DateTime timestamp) {
+	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
 
