@@ -1,30 +1,26 @@
-package forum.event;
+package forum.event.label;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
-@Expires("24h")
-public class DislikePostEvent implements Serializable {
+public class SuspendedUserLabelEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
     private Date executionTime;
     private String userId;
-    private String postId;
     
-	public DislikePostEvent() {
+	public SuspendedUserLabelEvent() {
 		super();
 	}
 
-	public DislikePostEvent(String userId, String postId) {
+	public SuspendedUserLabelEvent(String userId) {
 		super();
 		this.userId = userId;
-		this.postId = postId;
 		this.executionTime = new Date();
 	}    
 
@@ -44,16 +40,10 @@ public class DislikePostEvent implements Serializable {
 		this.userId = userId;
 	}
 
-	public String getPostId() {
-		return postId;
-	}
-
-	public void setPostId(String postId) {
-		this.postId = postId;
-	}
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}		
 
 }
+
+

@@ -148,5 +148,19 @@ public class Post {
 	public void update() {
 		PostRepository.getInstance().updatePost(this);
 	}
+	
+	public boolean isPoorContent() {
+		return (((likes*1.0)/(dislikes*1.0)) < (3.0/2.0));
+	}	
+
+	@Modifies({ "postLabels" })
+	public void doHarmfulPostAnalysis() {
+		String contentSample = postContent.toLowerCase();
+		if (contentSample.contains("poor") || 
+				contentSample.contains("harm") ||
+				contentSample.contains("bad")) {
+			addLabel(PostLabelEnum.HARMFUL);			
+		}
+	}
 		
 }

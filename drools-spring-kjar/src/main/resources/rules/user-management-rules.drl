@@ -4,10 +4,23 @@ import forum.model.Post;
 import forum.model.User;
 import forum.model.PostLabelEnum;
 import forum.model.UserLabelEnum;
+
 import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
+
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
+
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
 
 rule "More than 45 actions in a minute by user"
     when        
@@ -20,17 +33,15 @@ rule "More than 45 actions in a minute by user"
             count($d2)
         )
     then
-        System.out.println("WARNING: Spammer user. User " + $u.getName());
+        System.out.println("WARNING: Spammer user. User " + $u.getName());        
+        insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
-    	$u.update();
+    	// $u.update();
     	update($u);
         
 end
 
-rule "haha spammer"
-	when 
-		$u: User(userLabels.contains(UserLabelEnum.SPAMMER))		
-	then 		
-        System.out.println("haha spammer " + $u.getName());
-end
+
+
+
         

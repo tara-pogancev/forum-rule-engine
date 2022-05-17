@@ -4,16 +4,102 @@ import forum.model.Post;
 import forum.model.User;
 import forum.model.PostLabelEnum;
 import forum.model.UserLabelEnum;
+
 import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
 
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
 
-rule "Classify Post - TRENDING"
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
+
+rule "Trending post label expires"
     when
-        $post: Post( likes > 3, postContent != "trending" )
+        $post: Post($pId: postId, postLabels.contains(PostLabelEnum.TRENDING))        
+    	not $e: TrendingPostLabelEvent(postId == $pId)
     then
-        $post.setPostContent("trending");
+        $post.removeLabel(PostLabelEnum.TRENDING);
+        update($post);
+end
+
+rule "Trending post label revoked (Poor content)"
+    when
+    	$e: TrendingPostLabelEvent($pId: postId)    	
+    	$e2: PoorContentPostLabelEvent(postId == $pId)
+        $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.TRENDING))
+    then    
+        delete($e);
+        $post.removeLabel(PostLabelEnum.TRENDING);
+        update($post);
+end
+
+rule "Trending post label revoked (Harmful)"
+    when
+    	$e: TrendingPostLabelEvent($pId: postId)    	
+    	$e2: HarmfulPostLabelEvent(postId == $pId)
+        $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.TRENDING))
+    then    
+        delete($e);
+        $post.removeLabel(PostLabelEnum.TRENDING);
+        update($post);
+end
+
+rule "Poor content detected"
+    when
+        $post: Post($pId: postId, isPoorContent(), !postLabels.contains(PostLabelEnum.POOR_CONTENT))
+    then    
+    	insert(new PoorContentPostLabelEvent($pId));
+        $post.addLabel(PostLabelEnum.POOR_CONTENT);        
+        update($post);
+end
+
+rule "Poor content revoked"
+    when
+        $post: Post($pId: postId, !isPoorContent(), postLabels.contains(PostLabelEnum.POOR_CONTENT))        
+    	$e: PoorContentPostLabelEvent(postId == $pId)
+    then    
+    	delete($e);
+        $post.removeLabel(PostLabelEnum.POOR_CONTENT);        
+        update($post);
+end
+
+rule "Potentially harmful label"
+	salience 9
+    when
+        $post: Post($pId: postId, reports >= 10, !postLabels.contains(PostLabelEnum.POTENTIALLY_HARMFUL))
+        not $e: PotentiallyHarmfulPostLabelEvent(postId == $pId)
+    then    
+        $post.addLabel(PostLabelEnum.POTENTIALLY_HARMFUL);               
+    	insert(new PotentiallyHarmfulPostLabelEvent($pId));    
+        update($post);
+end
+
+rule "Harmful post analysis"
+	salience 8
+    when    
+        $e: PotentiallyHarmfulPostLabelEvent($pId: postId)
+        $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.POTENTIALLY_HARMFUL))
+    then        
+    	$post.removeLabel(PostLabelEnum.POTENTIALLY_HARMFUL);
+        $post.doHarmfulPostAnalysis();   
+        update($post);
+end
+
+rule "Harmful post detected"
+	salience 7
+    when
+        $post: Post($pId: postId, postLabels.contains(PostLabelEnum.HARMFUL))
+        not $e: HarmfulPostLabelEvent(postId == $pId)
+    then    
+    	insert(new HarmfulPostLabelEvent($pId));    	
         update($post);
 end

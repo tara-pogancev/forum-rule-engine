@@ -1,4 +1,4 @@
-package forum.event;
+package forum.event.label;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,23 +7,22 @@ import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 import org.kie.api.definition.type.Timestamp;
 
+
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
-@Expires("24h")
-public class DislikePostEvent implements Serializable {
+@Expires("72h")
+public class TrendingPostLabelEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
     private Date executionTime;
-    private String userId;
     private String postId;
     
-	public DislikePostEvent() {
+	public TrendingPostLabelEvent() {
 		super();
 	}
 
-	public DislikePostEvent(String userId, String postId) {
+	public TrendingPostLabelEvent(String postId) {
 		super();
-		this.userId = userId;
 		this.postId = postId;
 		this.executionTime = new Date();
 	}    
@@ -34,14 +33,6 @@ public class DislikePostEvent implements Serializable {
 
 	public void setExecutionTime(Date executionTime) {
 		this.executionTime = executionTime;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 
 	public String getPostId() {
