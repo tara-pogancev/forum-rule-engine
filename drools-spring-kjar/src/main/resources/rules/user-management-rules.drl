@@ -33,6 +33,16 @@ rule "Revoke top user label (Spammer)"
     	update($u);        
 end
 
+rule "Revoke spammer label (timeout)"
+    when        
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER))
+        not	$e1: SpammerUserLabelEvent(userId == $uId)
+        	over window:time(24h)
+    then      
+    	$u.removeLabel(UserLabelEnum.SPAMMER);
+    	update($u);        
+end
+
 rule "Revoke community contributor label (Spammer)"
     when                 
         $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), userLabels.contains(UserLabelEnum.SPAMMER))

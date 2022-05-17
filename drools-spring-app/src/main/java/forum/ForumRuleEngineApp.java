@@ -1,7 +1,10 @@
 package forum;
 
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieScanner;
+import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,7 +26,10 @@ public class ForumRuleEngineApp {
 				.newKieContainer(ks.newReleaseId("forum", "drools-spring-kjar", "0.0.1-SNAPSHOT"));		
 		KieScanner kScanner = ks.newKieScanner(kContainer);
 		kScanner.start(10_000);
-		new KieSessionSingleton(kContainer);
+		KieBaseConfiguration kbconf = ks.newKieBaseConfiguration();
+		kbconf.setOption(EventProcessingOption.STREAM);
+		KieBase kbase = kContainer.newKieBase(kbconf);
+		new KieSessionSingleton(kbase);
 		return kContainer;
 	}
 	
