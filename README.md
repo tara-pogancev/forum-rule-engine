@@ -16,3 +16,5 @@ Detaljnu specifikaciju po kojoj je sistem izgrađen, kao i listu pravila koje po
 **drools-spring-app**: Locirati main funkciju i pokrenuti je kao Spring aplikaciju u okviru Eclipse EE 2018-09 okruženja.
 
 ## Slike ekrana
+
+![forumRuleEngine](screenshots/1.png)
