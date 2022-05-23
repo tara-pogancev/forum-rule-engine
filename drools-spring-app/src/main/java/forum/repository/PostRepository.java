@@ -2,7 +2,10 @@ package forum.repository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import forum.KieSessionSingleton;
@@ -107,6 +110,39 @@ public class PostRepository {
 	
 	public void create(Post post) {
 		this.posts.add(post);
+	}
+	
+	public List<Post> getTop10Percent() {
+		List<Post> retVal = new ArrayList<>();
+		List<Post> latestPosts = getPostsLast24h();
+		
+		Integer totalSize = latestPosts.size();
+		Integer retValSize = (int) (1.0 + (0.1 * totalSize));
+		
+		if (totalSize != 0) {
+			Collections.sort(latestPosts, (p1, p2) -> p1.getLikes() - p2.getLikes());
+			Collections.reverse(latestPosts);
+			for (int i = 0; i <= retValSize; i++) {
+				if (i < totalSize) {
+					retVal.add(latestPosts.get(i));
+				}
+			}
+		}
+		
+		return retVal;
+	}
+	
+	public List<Post> getPostsLast24h() {
+		List<Post> retVal = new ArrayList<>();
+		Date yesterday = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+		
+		for (Post p: posts) {
+			if (p.getTimestamp().after(yesterday)) {
+				retVal.add(p);
+			};
+		}
+		
+		return retVal;
 	}
 
 }

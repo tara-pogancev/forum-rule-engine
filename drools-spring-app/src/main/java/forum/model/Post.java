@@ -162,5 +162,19 @@ public class Post {
 			addLabel(PostLabelEnum.HARMFUL);			
 		}
 	}
+	
+	public boolean isTrending() {
+		Date yesterday = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+		
+		if (this.likes >= 10 && getTimestamp().after(yesterday)) {			
+			PostRepository repo = PostRepository.getInstance();
+			List<Post> popular = repo.getTop10Percent();		
+			if (popular.stream().anyMatch(p -> p.postId.equals(this.postId))) {
+				return true;
+			}					
+		}
+
+		return false;
+	}
 		
 }

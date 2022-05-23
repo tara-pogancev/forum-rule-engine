@@ -23,10 +23,22 @@ import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
 
+
+rule "Trending post"
+    when
+        $post: Post($pId: postId, !postLabels.contains(PostLabelEnum.POOR_CONTENT),  !postLabels.contains(PostLabelEnum.TRENDING), isTrending(), likes >= 10)
+        not $e2: TrendingPostLabelEvent(postId == $pId)
+    then    
+    	insert(new TrendingPostLabelEvent($pId));   
+    	$post.addLabel(PostLabelEnum.TRENDING); 	    	
+        update($post);
+end
+
 rule "Trending post label expires"
     when
         $post: Post($pId: postId, postLabels.contains(PostLabelEnum.TRENDING))        
     	not $e: TrendingPostLabelEvent(postId == $pId)
+    			over window:time(72h)
     then
         $post.removeLabel(PostLabelEnum.TRENDING);
         update($post);
