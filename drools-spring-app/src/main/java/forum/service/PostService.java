@@ -18,9 +18,11 @@ import forum.KieSessionSingleton;
 import forum.controller.dto.PostDto;
 import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
+import forum.event.LikeQualityPostEvent;
 import forum.event.NewPostEvent;
 import forum.event.ReportPostEvent;
 import forum.model.Post;
+import forum.model.PostLabelEnum;
 import forum.model.RulesResponse;
 import forum.repository.PostRepository;
 import forum.repository.UserRepository;
@@ -60,6 +62,10 @@ public class PostService {
 			});		
 	    
 		kieSession.insert(new LikePostEvent(userId, postId));
+		if (!postRepository.getPostById(postId).getPostLabels().contains(PostLabelEnum.HARMFUL) 
+				&& !postRepository.getPostById(postId).getPostLabels().contains(PostLabelEnum.POOR_CONTENT) ) {
+			kieSession.insert(new LikeQualityPostEvent(userId, postId));
+		}
 		
 		Integer ruleFireCount = kieSession.fireAllRules();		
 		//log.info(ruleFireCount.toString());				

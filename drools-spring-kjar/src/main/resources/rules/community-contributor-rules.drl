@@ -1,0 +1,71 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
+import forum.event.LikeQualityPostEvent;
+import forum.event.ContributorWeekStreakEvent;
+
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
+
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
+
+
+rule "Community contributor week streak"
+    when                 
+        $u: User($uId: username)   
+        not $e1: ContributorWeekStreakEvent(userId == $uId)    
+        		over window:time(7d)  
+        Number(intValue >= 20) from accumulate(
+            $e2: LikeQualityPostEvent(userId == $uId)
+            	over window:time(7d),
+           	count($e2)
+        )        
+    then     
+        insert(new ContributorWeekStreakEvent($uId));            
+end
+
+rule "Community contributor label"
+    when                 
+        $u: User($uId: username, !userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), !userLabels.contains(UserLabelEnum.SPAMMER))   
+        not $e1: CommunityContributorUserLabelEvent(userId == $uId)      
+        Number(intValue >= 4) from accumulate(
+            $e2: ContributorWeekStreakEvent(userId == $uId)
+            	over window:time(30d),
+           	count($e2)
+        )        
+    then     
+        insert(new CommunityContributorUserLabelEvent($uId));        
+        $u.addLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
+        update($u);    
+end
+
+rule "Revoke community contributor label (not enough quality likes in the past week)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR))        
+        $e1: CommunityContributorUserLabelEvent(userId == $uId)
+        Number(intValue < 20) from accumulate(
+            $e2: LikeQualityPostEvent(userId == $uId)
+            	over window:time(7d),
+           	count($e2)
+        )
+    then     
+        delete($e1);
+    	$u.removeLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
+    	update($u);        
+end

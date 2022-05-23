@@ -33,10 +33,61 @@ rule "Revoke top user label (Spammer)"
     	update($u);        
 end
 
+rule "Revoke top user label (Poor Content post)"
+    when                 
+        $p: Post($pId: postId, $uId: postOwnerId)
+        $e: PoorContentPostLabelEvent(postId == $pId)
+        	over window:time(30d)
+        $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
+        $e2: TopUserLabelEvent(userId == $uId)
+    then             
+    	delete($e2);
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (Potentially harmful post)"
+    when                 
+        $p: Post($pId: postId, $uId: postOwnerId)
+        $e: PotentiallyHarmfulPostLabelEvent(postId == $pId)
+        	over window:time(30d)
+        $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
+        $e2: TopUserLabelEvent(userId == $uId)
+    then           
+    	delete($e2);  
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (no posts in two days)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.TOP_USER))
+        not $e: NewPostEvent(userId == $uId)
+        	over window:time(48h)
+         $e2: TopUserLabelEvent(userId == $uId)
+    then     
+    	delete($e2);          
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (Harmful post)"
+    when                 
+        $p: Post($pId: postId, $uId: postOwnerId)
+        $e: HarmfulPostLabelEvent(postId == $pId)
+        	over window:time(30d)
+        $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
+        $e2: TopUserLabelEvent(userId == $uId)
+    then             
+    	delete($e2);   
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
 rule "Revoke spammer label (timeout)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER))
-        not	$e1: SpammerUserLabelEvent(userId == $uId)
+        not	$e: SpammerUserLabelEvent(userId == $uId)
         	over window:time(24h)
     then      
     	$u.removeLabel(UserLabelEnum.SPAMMER);
