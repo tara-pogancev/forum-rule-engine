@@ -1,0 +1,59 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
+import forum.event.LikeQualityPostEvent;
+import forum.event.CommunityContributorStreakEvent;
+import forum.event.TopUserStreakEvent;
+
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
+
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
+
+rule "Potentially harmful label"
+	salience 9
+    when
+        $post: Post($pId: postId, reports >= 10, !postLabels.contains(PostLabelEnum.POTENTIALLY_HARMFUL))
+        not $e: PotentiallyHarmfulPostLabelEvent(postId == $pId)
+    then    
+        $post.addLabel(PostLabelEnum.POTENTIALLY_HARMFUL);               
+    	insert(new PotentiallyHarmfulPostLabelEvent($pId));    
+        update($post);
+end
+
+rule "Potentially harmful post analysis"
+	salience 8
+    when    
+        $e: PotentiallyHarmfulPostLabelEvent($pId: postId)
+        $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.POTENTIALLY_HARMFUL))
+    then        
+    	$post.removeLabel(PostLabelEnum.POTENTIALLY_HARMFUL);
+        $post.doHarmfulPostAnalysis();   
+        update($post);
+end
+
+rule "Harmful post detected"
+	salience 7
+    when
+        $post: Post($pId: postId, postLabels.contains(PostLabelEnum.HARMFUL))
+        not $e: HarmfulPostLabelEvent(postId == $pId)
+    then    
+    	insert(new HarmfulPostLabelEvent($pId));    	
+        update($post);
+end

@@ -1,0 +1,49 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
+import forum.event.LikeQualityPostEvent;
+import forum.event.CommunityContributorStreakEvent;
+import forum.event.TopUserStreakEvent;
+
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
+
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
+/*
+rule "Dislike/report activity is 50% or more in the past 24h"
+    when              
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.POTENTIAL_SPAMMER), !userLabels.contains(UserLabelEnum.SPAMMER))
+        $allActivity = Number() from accumulate(
+            $e1: DefaultUserActionEvent(userId == $uId) 
+            	over window:time[24h],
+            count($e2)
+        )
+        Number( this >= 0.8 * $allActivity) from accumulate(
+            $e2: ReportPostEvent(userId == $uId) 
+            	over window:time[24h],
+            $e3: DislikePostEvent(userId == $uId) 
+            	over window:time[24h],
+            count($e2, $e3)
+        )
+    then   
+    	System.out.println();
+    	$u.addLabel(UserLabelEnum.POTENTIAL_SPAMMER);
+    	update($u);        
+end
+*/

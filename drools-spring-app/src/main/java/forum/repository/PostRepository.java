@@ -114,7 +114,7 @@ public class PostRepository {
 	
 	public List<Post> getTop10Percent() {
 		List<Post> retVal = new ArrayList<>();
-		List<Post> latestPosts = getPostsLast24h();
+		List<Post> latestPosts = getPostsLast5Minutes();
 		
 		Integer totalSize = latestPosts.size();
 		Integer retValSize = (int) (1.0 + (0.1 * totalSize));
@@ -132,9 +132,9 @@ public class PostRepository {
 		return retVal;
 	}
 	
-	public List<Post> getPostsLast24h() {
+	public List<Post> getPostsLast5Minutes() {
 		List<Post> retVal = new ArrayList<>();
-		Date yesterday = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+		Date yesterday = new Date(System.currentTimeMillis() - (5 * 60 * 1000));
 		
 		for (Post p: posts) {
 			if (p.getTimestamp().after(yesterday)) {

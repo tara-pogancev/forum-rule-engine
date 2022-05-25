@@ -15,14 +15,12 @@ public class NewPostEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
     private Date executionTime;
     private String userId;
+    private String postId;
     
-	public NewPostEvent() {
-		super();
-	}
-
-	public NewPostEvent(String userId) {
+	public NewPostEvent(String userId, String postId) {
 		super();
 		this.userId = userId;
+		this.postId = postId;
 		this.executionTime = new Date();
 	}
 
@@ -42,8 +40,15 @@ public class NewPostEvent implements Serializable {
 		this.userId = userId;
 	}
 
+	public String getPostId() {
+		return postId;
+	}
+
+	public void setPostId(String postId) {
+		this.postId = postId;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}		
-
 }

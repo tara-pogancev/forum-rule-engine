@@ -10,6 +10,9 @@ import forum.event.LikePostEvent;
 import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
 import forum.event.DefaultUserActionEvent;
+import forum.event.LikeQualityPostEvent;
+import forum.event.CommunityContributorStreakEvent;
+import forum.event.TopUserStreakEvent;
 
 import forum.event.label.TopUserLabelEvent;
 import forum.event.label.CommunityContributorUserLabelEvent;
@@ -23,6 +26,16 @@ import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
 
+rule "Harmful user label"
+    when        
+        $p: Post($uId: postOwnerId, postLabels.contains(PostLabelEnum.HARMFUL))            
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.HARMFUL_USER))
+    then     
+        insert(new HarmfulUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.HARMFUL_USER);
+    	update($u);        
+end
+
 rule "Temorarily suspended user"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER), !userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))            
@@ -35,7 +48,7 @@ rule "Temorarily suspended user"
     	update($u);        
 end
 
-rule "Revoke temporarily suspended label (timeout)"
+rule "Revoke temporarily suspended label (Timeout)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))
         not	$e1: TemporarilySuspendedUserLabelEvent(userId == $uId)
@@ -72,7 +85,7 @@ rule "Suspended user (5x harmful posts)"
     	update($u);        
 end
 
-rule "Suspended user (spammer after harmful label)"
+rule "Suspended user (Spammer after harmful label)"
     when       
         $e1: HarmfulUserLabelEvent($uId: userId)         
         $e2: SpammerUserLabelEvent(userId == $uId, this after $e1) 
@@ -83,7 +96,7 @@ rule "Suspended user (spammer after harmful label)"
     	update($u);        
 end
 
-rule "Revoke temporarily suspended label (suspended)"
+rule "Revoke temporarily suspended label (Suspended)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SUSPENDED), userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))   
     then           

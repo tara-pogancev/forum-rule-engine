@@ -9,7 +9,6 @@ import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
-@Expires("90h")
 public class TemporarilySuspendedUserLabelEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

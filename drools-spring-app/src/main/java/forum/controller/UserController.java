@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import forum.model.RulesResponse;
 import forum.model.User;
 import forum.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,10 @@ public class UserController {
     public User getById(@PathVariable String userId) {
        return userService.getById(userId);
     }
+    
+    @GetMapping("/refresh")
+    public RulesResponse refresh() {
+        return userService.refresh();
+     }
 
 }

@@ -1,29 +1,28 @@
-package forum.event.label;
+package forum.event;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
-public class PoorContentPostLabelEvent implements Serializable {
-	
+public class TopUserStreakEvent implements Serializable {	
+
 	private static final long serialVersionUID = 1L;
     private Date executionTime;
-    private String postId;
+    private String userId;
     
-	public PoorContentPostLabelEvent() {
+	public TopUserStreakEvent() {
 		super();
 	}
 
-	public PoorContentPostLabelEvent(String postId) {
+	public TopUserStreakEvent(String userId) {
 		super();
-		this.postId = postId;
+		this.userId = userId;
 		this.executionTime = new Date();
-	}    
+	}
 
 	public Date getExecutionTime() {
 		return executionTime;
@@ -33,12 +32,12 @@ public class PoorContentPostLabelEvent implements Serializable {
 		this.executionTime = executionTime;
 	}
 
-	public String getPostId() {
-		return postId;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setPostId(String postId) {
-		this.postId = postId;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public static long getSerialversionuid() {

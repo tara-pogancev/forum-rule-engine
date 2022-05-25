@@ -1,0 +1,118 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
+import forum.event.LikeQualityPostEvent;
+import forum.event.CommunityContributorStreakEvent;
+import forum.event.TopUserStreakEvent;
+
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
+
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
+
+rule "Top user 1 minute streak"
+    when                 
+        $u: User($uId: username, !userLabels.contains(UserLabelEnum.TOP_USER))   
+        $p1: NewPostEvent(userId == $uId)
+        	over window:time(30s)
+        not $e1: TopUserStreakEvent(userId == $uId)    
+        		over window:time(1m)                 
+    then     
+        insert(new CommunityContributorStreakEvent($uId));            
+end
+
+rule "Top user label"
+    when                 
+        $u: User($uId: username, !userLabels.contains(UserLabelEnum.TOP_USER), !userLabels.contains(UserLabelEnum.SPAMMER))   
+        not $e1: TopUserLabelEvent(userId == $uId)      
+        Number(intValue >= 3) from accumulate(
+            $e2: TopUserStreakEvent(userId == $uId)
+            	over window:time(4m),
+           	count($e2)
+        ) 
+        not $p1: Post(postOwnerId == $uId, postLabels.contains(PostLabelEnum.POOR_CONTENT), inRecentMonth())
+        not $p2: Post(postOwnerId == $uId, reports >= 10, inRecentMonth())
+        not $p3: Post(postOwnerId == $uId, postLabels.contains(PostLabelEnum.HARMFUL), inRecentMonth())
+    then     
+        insert(new TopUserLabelEvent($uId));        
+        $u.addLabel(UserLabelEnum.TOP_USER);
+        update($u);    
+end
+
+rule "Revoke top user label (Spammer)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.TOP_USER), userLabels.contains(UserLabelEnum.SPAMMER))
+        $e: TopUserLabelEvent(userId == $uId)
+    then     
+        delete($e);
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (Poor Content post)"
+    when                 
+        $p: Post($pId: postId, $uId: postOwnerId)
+        $e: PoorContentPostLabelEvent(postId == $pId)
+        	over window:time(24h)
+        $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
+        $e2: TopUserLabelEvent(userId == $uId)
+    then             
+    	delete($e2);
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (Potentially harmful post)"
+    when                 
+        $p: Post($pId: postId, $uId: postOwnerId)
+        $e: PotentiallyHarmfulPostLabelEvent(postId == $pId)
+        	over window:time(24h)
+        $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
+        $e2: TopUserLabelEvent(userId == $uId)
+    then           
+    	delete($e2);  
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (Harmful post)"
+    when                 
+        $p: Post($pId: postId, $uId: postOwnerId)
+        $e: HarmfulPostLabelEvent(postId == $pId)
+        	over window:time(24h)
+        $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
+        $e2: TopUserLabelEvent(userId == $uId)
+    then             
+    	delete($e2);   
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+
+rule "Revoke top user label (No posts in past minute)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.TOP_USER))
+        not $e: NewPostEvent(userId == $uId)
+        	over window:time(1m)
+         $e2: TopUserLabelEvent(userId == $uId)
+    then     
+    	delete($e2);          
+    	$u.removeLabel(UserLabelEnum.TOP_USER);
+    	update($u);        
+end
+

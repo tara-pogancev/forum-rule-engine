@@ -164,9 +164,9 @@ public class Post {
 	}
 	
 	public boolean isTrending() {
-		Date yesterday = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+		Date past5Minutes = new Date(System.currentTimeMillis() - (5 * 60 * 1000));
 		
-		if (this.likes >= 10 && getTimestamp().after(yesterday)) {			
+		if (this.likes >= 10 && getTimestamp().after(past5Minutes)) {			
 			PostRepository repo = PostRepository.getInstance();
 			List<Post> popular = repo.getTop10Percent();		
 			if (popular.stream().anyMatch(p -> p.postId.equals(this.postId))) {
@@ -175,6 +175,11 @@ public class Post {
 		}
 
 		return false;
+	}
+	
+	public boolean inRecentMonth() {
+		Date lastMonth = new Date(System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000));
+		return this.timestamp.after(lastMonth);
 	}
 		
 }

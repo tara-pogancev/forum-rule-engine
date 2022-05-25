@@ -11,7 +11,8 @@ import forum.event.ReportPostEvent;
 import forum.event.NewPostEvent;
 import forum.event.DefaultUserActionEvent;
 import forum.event.LikeQualityPostEvent;
-import forum.event.ContributorWeekStreakEvent;
+import forum.event.CommunityContributorStreakEvent;
+import forum.event.TopUserStreakEvent;
 
 import forum.event.label.TopUserLabelEvent;
 import forum.event.label.CommunityContributorUserLabelEvent;
@@ -25,28 +26,27 @@ import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
 
-
-rule "Community contributor week streak"
+rule "Community contributor minute streak"
     when                 
         $u: User($uId: username)   
-        not $e1: ContributorWeekStreakEvent(userId == $uId)    
-        		over window:time(7d)  
-        Number(intValue >= 20) from accumulate(
+        not $e1: CommunityContributorStreakEvent(userId == $uId)    
+        		over window:time(1m)  
+        Number(intValue >= 5) from accumulate(
             $e2: LikeQualityPostEvent(userId == $uId)
-            	over window:time(7d),
+            	over window:time(1m),
            	count($e2)
         )        
     then     
-        insert(new ContributorWeekStreakEvent($uId));            
+        insert(new CommunityContributorStreakEvent($uId));            
 end
 
 rule "Community contributor label"
     when                 
         $u: User($uId: username, !userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), !userLabels.contains(UserLabelEnum.SPAMMER))   
         not $e1: CommunityContributorUserLabelEvent(userId == $uId)      
-        Number(intValue >= 4) from accumulate(
-            $e2: ContributorWeekStreakEvent(userId == $uId)
-            	over window:time(30d),
+        Number(intValue >= 3) from accumulate(
+            $e2: CommunityContributorStreakEvent(userId == $uId)
+            	over window:time(4m),
            	count($e2)
         )        
     then     
@@ -55,13 +55,13 @@ rule "Community contributor label"
         update($u);    
 end
 
-rule "Revoke community contributor label (not enough quality likes in the past week)"
+rule "Revoke community contributor label (Not enough quality likes in the past week)"
     when                 
         $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR))        
         $e1: CommunityContributorUserLabelEvent(userId == $uId)
-        Number(intValue < 20) from accumulate(
+        Number(intValue < 5) from accumulate(
             $e2: LikeQualityPostEvent(userId == $uId)
-            	over window:time(7d),
+            	over window:time(1m),
            	count($e2)
         )
     then     

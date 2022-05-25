@@ -1,0 +1,79 @@
+package rules;
+
+import forum.model.Post;
+import forum.model.User;
+import forum.model.PostLabelEnum;
+import forum.model.UserLabelEnum;
+
+import forum.event.DislikePostEvent;
+import forum.event.LikePostEvent;
+import forum.event.ReportPostEvent;
+import forum.event.NewPostEvent;
+import forum.event.DefaultUserActionEvent;
+import forum.event.LikeQualityPostEvent;
+import forum.event.CommunityContributorStreakEvent;
+import forum.event.TopUserStreakEvent;
+
+import forum.event.label.TopUserLabelEvent;
+import forum.event.label.CommunityContributorUserLabelEvent;
+import forum.event.label.SpammerUserLabelEvent;
+import forum.event.label.HarmfulUserLabelEvent;
+import forum.event.label.TemporarilySuspendedUserLabelEvent;
+import forum.event.label.SuspendedUserLabelEvent;
+
+import forum.event.label.TrendingPostLabelEvent;
+import forum.event.label.PoorContentPostLabelEvent;
+import forum.event.label.PotentiallyHarmfulPostLabelEvent;
+import forum.event.label.HarmfulPostLabelEvent;
+
+rule "Spammer user label (Too many actions)"
+    when        
+        $d1: DefaultUserActionEvent($uId: userId)            
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
+        Number(intValue >= 45) from accumulate(
+            $d2: DefaultUserActionEvent(
+            	userId == $uId, 
+                this meets[1m] $d1),
+            count($d2)
+        )
+    then      
+        insert(new SpammerUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.SPAMMER);
+    	update($u);        
+end
+
+rule "Spammer user label (Too many posts)"
+    when        
+        $e1: NewPostEvent($uId: userId)            
+        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
+        Number(intValue >= 10) from accumulate(
+            $e2: NewPostEvent(
+            	userId == $uId, 
+                this meets[5m] $e1),
+            count($e2)
+        )
+    then    
+        insert(new SpammerUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.SPAMMER);
+    	update($u);        
+end
+
+rule "Revoke spammer label (Timeout)"
+    when        
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER))
+        not	$e: SpammerUserLabelEvent(userId == $uId)
+        	over window:time(24h)
+    then      
+    	$u.removeLabel(UserLabelEnum.SPAMMER);
+    	update($u);        
+end
+
+rule "Revoke community contributor label (Spammer)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), userLabels.contains(UserLabelEnum.SPAMMER))
+        $e: CommunityContributorUserLabelEvent(userId == $uId)
+    then     
+        delete($e);
+    	$u.removeLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
+    	update($u);        
+end

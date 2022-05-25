@@ -9,7 +9,6 @@ import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
-@Expires("99h")
 public class TopUserLabelEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

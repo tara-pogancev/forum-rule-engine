@@ -3,11 +3,13 @@ package forum.event;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
+@Expires("24h")
 public class LikeQualityPostEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;

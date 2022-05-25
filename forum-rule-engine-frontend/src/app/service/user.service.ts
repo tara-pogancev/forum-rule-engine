@@ -18,4 +18,9 @@ export class UserServiceService {
     const url = this.url + '/' + id;
     return this._http.get<any>(url);
   }
+
+  refresh() {
+    const url = this.url + '/refresh';
+    return this._http.get<any>(url);
+  }
 }

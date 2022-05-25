@@ -8,17 +8,17 @@ import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
-public class ContributorWeekStreakEvent implements Serializable {	
+public class CommunityContributorStreakEvent implements Serializable {	
 
 	private static final long serialVersionUID = 1L;
     private Date executionTime;
     private String userId;
     
-	public ContributorWeekStreakEvent() {
+	public CommunityContributorStreakEvent() {
 		super();
 	}
 
-	public ContributorWeekStreakEvent(String userId) {
+	public CommunityContributorStreakEvent(String userId) {
 		super();
 		this.userId = userId;
 		this.executionTime = new Date();

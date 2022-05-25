@@ -28,6 +28,7 @@ import forum.repository.PostRepository;
 import forum.repository.UserRepository;
 
 @Service
+@SuppressWarnings("unused")
 public class PostService {
 	
 	private static Logger log = LoggerFactory.getLogger(ForumRuleEngineApp.class);
@@ -66,7 +67,7 @@ public class PostService {
 				&& !postRepository.getPostById(postId).getPostLabels().contains(PostLabelEnum.POOR_CONTENT) ) {
 			kieSession.insert(new LikeQualityPostEvent(userId, postId));
 		}
-		
+				
 		Integer ruleFireCount = kieSession.fireAllRules();		
 		//log.info(ruleFireCount.toString());				
     	return new RulesResponse(firedRules);
@@ -119,7 +120,7 @@ public class PostService {
 		Post post = new Post(newPost.postOwnerId, newPost.postContent);
 		postRepository.create(post);    	
 		kieSession.insert(post);
-		kieSession.insert(new NewPostEvent(post.getPostOwnerId()));
+		kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
 		
 		Integer ruleFireCount = kieSession.fireAllRules();		
 		//log.info(ruleFireCount.toString());				
