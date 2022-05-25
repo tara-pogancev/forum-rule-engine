@@ -177,8 +177,8 @@ public class Post {
 		return false;
 	}
 	
-	public boolean inRecentMonth() {
-		Date lastMonth = new Date(System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000));
+	public boolean inRecent2Mins() {
+		Date lastMonth = new Date(System.currentTimeMillis() - (2 * 60 * 1000));
 		return this.timestamp.after(lastMonth);
 	}
 		

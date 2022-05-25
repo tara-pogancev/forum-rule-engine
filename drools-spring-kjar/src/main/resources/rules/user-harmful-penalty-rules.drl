@@ -36,7 +36,7 @@ rule "Harmful user label"
     	update($u);        
 end
 
-rule "Temorarily suspended user"
+rule "Temorarily suspended user (Spammer)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER), !userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))            
         not $e: SuspendedUserLabelEvent(userId == $uId)
@@ -72,10 +72,10 @@ rule "Suspended user (5x spammer)"
     	update($u);        
 end
 
-rule "Suspended user (5x harmful posts)"
+rule "Suspended user (3x harmful posts)"
     when        
         $u: User($uId: username, !userLabels.contains(UserLabelEnum.SUSPENDED))   
-        Number(intValue >= 5) from accumulate (
+        Number(intValue >= 3) from accumulate (
         	$p: Post(postOwnerId == $uId, postLabels.contains(PostLabelEnum.HARMFUL)),
         	count($p)
         )
