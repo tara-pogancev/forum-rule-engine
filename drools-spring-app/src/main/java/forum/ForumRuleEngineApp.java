@@ -1,11 +1,14 @@
 package forum;
 
+import org.drools.core.ClockType;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieScanner;
 import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.api.runtime.conf.ClockTypeOption;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +32,9 @@ public class ForumRuleEngineApp {
 		KieBaseConfiguration kbconf = ks.newKieBaseConfiguration();
 		kbconf.setOption(EventProcessingOption.STREAM);
 		KieBase kbase = kContainer.newKieBase(kbconf);
-		new KieSessionSingleton(kbase);
+		KieSessionConfiguration ksconf = ks.newKieSessionConfiguration();
+        ksconf.setOption(ClockTypeOption.get(ClockType.REALTIME_CLOCK.getId()));
+		new KieSessionSingleton(kbase, ksconf);
 		return kContainer;
 	}
 	

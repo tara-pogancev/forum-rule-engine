@@ -30,6 +30,7 @@ rule "Poor content detected"
     when
         $post: Post($pId: postId, isPoorContent(), !postLabels.contains(PostLabelEnum.POOR_CONTENT))
     then    
+    	System.out.println("Poor content revoked: " + $pId);
     	insert(new PoorContentPostLabelEvent($pId));
         $post.addLabel(PostLabelEnum.POOR_CONTENT);        
         update($post);
@@ -40,6 +41,7 @@ rule "Poor content revoked"
         $post: Post($pId: postId, !isPoorContent(), postLabels.contains(PostLabelEnum.POOR_CONTENT))        
     	$e: PoorContentPostLabelEvent(postId == $pId)
     then    
+    	System.out.println("Poor content revoked: " + $pId);
     	delete($e);
         $post.removeLabel(PostLabelEnum.POOR_CONTENT);        
         update($post);

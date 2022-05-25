@@ -31,6 +31,7 @@ rule "Harmful user label"
         $p: Post($uId: postOwnerId, postLabels.contains(PostLabelEnum.HARMFUL))            
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.HARMFUL_USER))
     then     
+    	System.out.println("Harmful user label: " + $uId);
         insert(new HarmfulUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.HARMFUL_USER);
     	update($u);        
@@ -43,6 +44,7 @@ rule "Temorarily suspended user (Spammer)"
         not	$e1: TemporarilySuspendedUserLabelEvent(userId == $uId)
         	over window:time(2m)
     then      
+    	System.out.println("Temorarily suspended user (Spammer): " + $uId);
         insert(new TemporarilySuspendedUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
     	update($u);        
@@ -53,7 +55,8 @@ rule "Revoke temporarily suspended label (Timeout)"
         $u: User($uId: username, userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))
         not	$e1: TemporarilySuspendedUserLabelEvent(userId == $uId)
         	over window:time(2m)
-    then           
+    then    
+    	System.out.println("Revoke temporarily suspended label (Timeout): " + $uId);       
     	$u.removeLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
     	update($u);        
 end
@@ -66,7 +69,8 @@ rule "Suspended user (5x spammer)"
         	$e2: TemporarilySuspendedUserLabelEvent(userId == $uId),
         	count($e2)
         )
-    then      
+    then    
+    	System.out.println("Suspended user (5x spammer): " + $uId);  
         insert(new SuspendedUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SUSPENDED);
     	update($u);        
@@ -80,6 +84,7 @@ rule "Suspended user (3x harmful posts)"
         	count($p)
         )
     then      
+    	System.out.println("Suspended user (3x harmful posts): " + $uId);
         insert(new SuspendedUserLabelEvent($uId));       
     	$u.addLabel(UserLabelEnum.SUSPENDED);
     	update($u);        
@@ -91,6 +96,7 @@ rule "Suspended user (Spammer after harmful label)"
         $e2: SpammerUserLabelEvent(userId == $uId, this after $e1) 
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SUSPENDED))   
     then      
+    	System.out.println("Suspended user (Spammer after harmful label): " + $uId);
         insert(new SuspendedUserLabelEvent($uId));       
     	$u.addLabel(UserLabelEnum.SUSPENDED);
     	update($u);        
@@ -99,7 +105,8 @@ end
 rule "Revoke temporarily suspended label (Suspended)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SUSPENDED), userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))   
-    then           
+    then      
+    	System.out.println("Revoke temporarily suspended label (Suspended): " + $uId);     
     	$u.removeLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
     	update($u);        
 end

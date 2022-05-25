@@ -25,11 +25,8 @@ public class KieSessionSingleton {
 	}
 	
 	@Autowired
-	public KieSessionSingleton(KieBase kbase) {
-        KieServices ks = KieServices.Factory.get();
-		KieSessionConfiguration ksconf1 = ks.newKieSessionConfiguration();
-        ksconf1.setOption(ClockTypeOption.get(ClockType.REALTIME_CLOCK.getId()));
-		KieSessionSingleton.instance = kbase.newKieSession(ksconf1, null);
+	public KieSessionSingleton(KieBase kbase, KieSessionConfiguration ksconf) {
+		KieSessionSingleton.instance = kbase.newKieSession(ksconf, null);
 	}
 	
 	public static void removeListeners() {

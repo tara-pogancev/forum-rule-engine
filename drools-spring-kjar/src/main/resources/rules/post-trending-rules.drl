@@ -31,6 +31,7 @@ rule "Trending post detected"
         $post: Post($pId: postId, !postLabels.contains(PostLabelEnum.POOR_CONTENT),  !postLabels.contains(PostLabelEnum.TRENDING), !postLabels.contains(PostLabelEnum.HARMFUL), isTrending(), likes >= 10)
         not $e2: TrendingPostLabelEvent(postId == $pId)
     then    
+    	System.out.println("Trending post detected: " + $pId);
     	insert(new TrendingPostLabelEvent($pId));   
     	$post.addLabel(PostLabelEnum.TRENDING); 	    	
         update($post);
@@ -42,6 +43,7 @@ rule "Trending post label revoked (Timeout)"
     	not $e: TrendingPostLabelEvent(postId == $pId)
     			over window:time(5m)
     then
+    	System.out.println("Trending post label revoked (Timeout): " + $pId);
         $post.removeLabel(PostLabelEnum.TRENDING);
         update($post);
 end
@@ -52,6 +54,7 @@ rule "Trending post label revoked (Poor content)"
     	$e2: PoorContentPostLabelEvent(postId == $pId)
         $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.TRENDING))
     then    
+    	System.out.println("Trending post label revoked (Poor content): " + $pId);
         delete($e);
         $post.removeLabel(PostLabelEnum.TRENDING);
         update($post);
@@ -64,6 +67,7 @@ rule "Trending post label revoked (Harmful)"
     	$e2: HarmfulPostLabelEvent(postId == $pId)
         $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.TRENDING))
     then    
+    	System.out.println("Trending post label revoked (Harmful): " + $pId);
         delete($e);
         $post.removeLabel(PostLabelEnum.TRENDING);
         update($post);

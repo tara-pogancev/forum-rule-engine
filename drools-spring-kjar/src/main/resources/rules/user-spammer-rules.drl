@@ -40,6 +40,7 @@ rule "Spammer user label (Too many actions)"
         not	$e3: SpammerUserLabelEvent(userId == $uId)
         	over window:time(59s)
     then      
+    	System.out.println("Spammer user label (Too many actions): " + $uId);
         insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
     	update($u);        
@@ -59,6 +60,7 @@ rule "Spammer user label (Too many posts)"
         not	$e3: SpammerUserLabelEvent(userId == $uId)
         	over window:time(59s)
     then    
+    	System.out.println("Spammer user label (Too many posts): " + $uId);
         insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
     	update($u);        
@@ -70,6 +72,7 @@ rule "Revoke spammer label (Timeout)"
         not	$e: SpammerUserLabelEvent(userId == $uId)
         	over window:time(1m)
     then      
+    	System.out.println("Revoke spammer label (Timeout): " + $uId);
     	$u.removeLabel(UserLabelEnum.SPAMMER);
     	update($u);        
 end

@@ -32,6 +32,7 @@ rule "Potentially harmful label"
         $post: Post($pId: postId, reports >= 10, !postLabels.contains(PostLabelEnum.POTENTIALLY_HARMFUL))
         not $e: PotentiallyHarmfulPostLabelEvent(postId == $pId)
     then    
+    	System.out.println("Potentially harmful label: " + $pId);
         $post.addLabel(PostLabelEnum.POTENTIALLY_HARMFUL);               
     	insert(new PotentiallyHarmfulPostLabelEvent($pId));    
         update($post);
@@ -43,6 +44,7 @@ rule "Potentially harmful post analysis"
         $e: PotentiallyHarmfulPostLabelEvent($pId: postId)
         $post: Post(postId == $pId, postLabels.contains(PostLabelEnum.POTENTIALLY_HARMFUL))
     then        
+    	System.out.println("Potentially harmful post analysis: " + $pId);
     	$post.removeLabel(PostLabelEnum.POTENTIALLY_HARMFUL);
         $post.doHarmfulPostAnalysis();   
         update($post);
@@ -54,6 +56,7 @@ rule "Harmful post detected"
         $post: Post($pId: postId, postLabels.contains(PostLabelEnum.HARMFUL))
         not $e: HarmfulPostLabelEvent(postId == $pId)
     then    
+    	System.out.println("Harmful post detected: " + $pId);
     	insert(new HarmfulPostLabelEvent($pId));    	
         update($post);
 end

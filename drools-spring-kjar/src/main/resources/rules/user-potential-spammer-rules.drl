@@ -48,6 +48,7 @@ rule "Dislike/report activity is 50% or more in the past 24h"
         )
         eval (($reports.doubleValue() + $dislikes.doubleValue()) > (0.5 * $allActivity.doubleValue()))
     then    
+    	System.out.println("Dislike/report activity is 50% or more in the past 24h: " + $uId);
     	$u.addLabel(UserLabelEnum.POTENTIAL_SPAMMER);
     	update($u);        
 end
@@ -70,6 +71,7 @@ rule "Spammer (Reporting good content)"
         )      
         eval (($reports2.doubleValue()) < (0.8 * $reports1.doubleValue()))
     then  
+    	System.out.println("Spammer (Reporting good content): " + $uId);
     	$u.removeLabel(UserLabelEnum.POTENTIAL_SPAMMER);
     	insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
@@ -94,6 +96,7 @@ rule "Spammer (Disliking good content)"
         )
         eval (($dislikes2.doubleValue()) < (0.8 * $dislikes1.doubleValue()))
     then   
+    	System.out.println("Spammer (Disliking good content): " + $uId);
     	$u.removeLabel(UserLabelEnum.POTENTIAL_SPAMMER);
     	insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
@@ -129,6 +132,7 @@ rule "Revoke potential spammer (Justified behaviour)"
         eval (($reports2.doubleValue()) >= (0.8 * $reports1.doubleValue()))
         eval (($dislikes2.doubleValue()) >= (0.8 * $dislikes1.doubleValue()))
     then   
+    	System.out.println("Revoke potential spammer (Justified behaviour): " + $uId);
     	$u.removeLabel(UserLabelEnum.POTENTIAL_SPAMMER);
     	update($u);        
 end

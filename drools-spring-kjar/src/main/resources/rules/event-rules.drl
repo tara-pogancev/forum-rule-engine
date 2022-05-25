@@ -33,6 +33,7 @@ rule "Post like"
         $e: LikePostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
     then
+    	System.out.println("Post like: " + $pId);
     	insert(new DefaultUserActionEvent($uId));
     	$p.likePost();
     	update($p);
@@ -45,6 +46,7 @@ rule "Post dislike"
         $e: DislikePostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
     then    
+    	System.out.println("Post dislike: " + $pId);
     	insert(new DefaultUserActionEvent($uId));
     	$p.dislikePost();
     	update($p);
@@ -57,6 +59,7 @@ rule "Post report"
         $e: ReportPostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
     then
+    	System.out.println("Post report: " + $pId);
         insert(new DefaultUserActionEvent($uId));
     	$p.reportPost();
     	update($p);
