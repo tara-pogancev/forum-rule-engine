@@ -25,7 +25,7 @@ import forum.event.label.TrendingPostLabelEvent;
 import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
-
+/*
 rule "Community contributor minute streak"
     when                 
         $u: User($uId: username)   
@@ -55,7 +55,7 @@ rule "Community contributor label"
         update($u);    
 end
 
-rule "Revoke community contributor label (Not enough quality likes in the past week)"
+rule "Revoke community contributor label (Not enough quality likes in the past minute)"
     when                 
         $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR))        
         $e1: CommunityContributorUserLabelEvent(userId == $uId)
@@ -69,3 +69,15 @@ rule "Revoke community contributor label (Not enough quality likes in the past w
     	$u.removeLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
     	update($u);        
 end
+
+
+rule "Revoke community contributor label (Spammer)"
+    when                 
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), userLabels.contains(UserLabelEnum.SPAMMER))
+        $e: CommunityContributorUserLabelEvent(userId == $uId)
+    then     
+        delete($e);
+    	$u.removeLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
+    	update($u);        
+end
+*/

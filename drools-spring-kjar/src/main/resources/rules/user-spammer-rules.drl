@@ -28,7 +28,8 @@ import forum.event.label.HarmfulPostLabelEvent;
 
 rule "Spammer user label (Too many actions)"
     when        
-        $d1: DefaultUserActionEvent($uId: userId)            
+        $d1: DefaultUserActionEvent($uId: userId)   
+        	over window:time(1m)         
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
         Number(intValue >= 45) from accumulate(
             $d2: DefaultUserActionEvent(
@@ -36,6 +37,8 @@ rule "Spammer user label (Too many actions)"
                 this meets[1m] $d1),
             count($d2)
         )
+        not	$e3: SpammerUserLabelEvent(userId == $uId)
+        	over window:time(59s)
     then      
         insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
@@ -44,14 +47,17 @@ end
 
 rule "Spammer user label (Too many posts)"
     when        
-        $e1: NewPostEvent($uId: userId)            
+        $e1: NewPostEvent($uId: userId)    
+        	over window:time(1m)        
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
         Number(intValue >= 10) from accumulate(
             $e2: NewPostEvent(
             	userId == $uId, 
-                this meets[5m] $e1),
+                this meets[1m] $e1),
             count($e2)
         )
+        not	$e3: SpammerUserLabelEvent(userId == $uId)
+        	over window:time(59s)
     then    
         insert(new SpammerUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SPAMMER);
@@ -62,18 +68,8 @@ rule "Revoke spammer label (Timeout)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER))
         not	$e: SpammerUserLabelEvent(userId == $uId)
-        	over window:time(24h)
+        	over window:time(1m)
     then      
     	$u.removeLabel(UserLabelEnum.SPAMMER);
-    	update($u);        
-end
-
-rule "Revoke community contributor label (Spammer)"
-    when                 
-        $u: User($uId: username, userLabels.contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR), userLabels.contains(UserLabelEnum.SPAMMER))
-        $e: CommunityContributorUserLabelEvent(userId == $uId)
-    then     
-        delete($e);
-    	$u.removeLabel(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
     	update($u);        
 end

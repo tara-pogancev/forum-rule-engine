@@ -25,7 +25,7 @@ import forum.event.label.TrendingPostLabelEvent;
 import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
-
+/*
 rule "Top user 1 minute streak"
     when                 
         $u: User($uId: username, !userLabels.contains(UserLabelEnum.TOP_USER))   
@@ -115,4 +115,4 @@ rule "Revoke top user label (No posts in past minute)"
     	$u.removeLabel(UserLabelEnum.TOP_USER);
     	update($u);        
 end
-
+*/

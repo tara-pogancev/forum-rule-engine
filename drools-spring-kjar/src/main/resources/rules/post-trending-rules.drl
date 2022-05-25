@@ -28,7 +28,7 @@ import forum.event.label.HarmfulPostLabelEvent;
 
 rule "Trending post detected"
     when
-        $post: Post($pId: postId, !postLabels.contains(PostLabelEnum.POOR_CONTENT),  !postLabels.contains(PostLabelEnum.TRENDING), isTrending(), likes >= 10)
+        $post: Post($pId: postId, !postLabels.contains(PostLabelEnum.POOR_CONTENT),  !postLabels.contains(PostLabelEnum.TRENDING), !postLabels.contains(PostLabelEnum.HARMFUL), isTrending(), likes >= 10)
         not $e2: TrendingPostLabelEvent(postId == $pId)
     then    
     	insert(new TrendingPostLabelEvent($pId));   
@@ -58,6 +58,7 @@ rule "Trending post label revoked (Poor content)"
 end
 
 rule "Trending post label revoked (Harmful)"
+	salience 9
     when
     	$e: TrendingPostLabelEvent($pId: postId)    	
     	$e2: HarmfulPostLabelEvent(postId == $pId)

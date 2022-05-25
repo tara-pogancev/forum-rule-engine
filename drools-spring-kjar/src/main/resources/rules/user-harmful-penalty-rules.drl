@@ -41,7 +41,7 @@ rule "Temorarily suspended user"
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER), !userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))            
         not $e: SuspendedUserLabelEvent(userId == $uId)
         not	$e1: TemporarilySuspendedUserLabelEvent(userId == $uId)
-        	over window:time(48h)
+        	over window:time(2m)
     then      
         insert(new TemporarilySuspendedUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
@@ -52,7 +52,7 @@ rule "Revoke temporarily suspended label (Timeout)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.TEMPORARILY_SUSPENDED))
         not	$e1: TemporarilySuspendedUserLabelEvent(userId == $uId)
-        	over window:time(48h)
+        	over window:time(2m)
     then           
     	$u.removeLabel(UserLabelEnum.TEMPORARILY_SUSPENDED);
     	update($u);        

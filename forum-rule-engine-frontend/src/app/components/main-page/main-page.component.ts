@@ -30,6 +30,18 @@ export class MainPageComponent implements OnInit {
     this.refreshAllUsers();
 
     this.addLog('FORUM RULE ENGINE PLAYGROUND CONSOLE IS READY.');
+
+    setInterval(() => {
+      this.refresh();
+    }, 5000);
+  }
+
+  async refresh() {
+    this.userService.refresh().subscribe((data) => {
+      if (data.message != null) {
+        this.addLog(data.message);
+      }
+    });
   }
 
   refreshAllUsers() {
