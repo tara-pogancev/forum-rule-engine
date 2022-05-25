@@ -36,7 +36,7 @@ rule "Top user 30s streak"
         not $e1: TopUserStreakEvent(userId == $uId)    
         		over window:time(30s)                 
     then   
-    	System.out.println("streak " + $uId);
+    	// System.out.println("streak " + $uId);
         insert(new TopUserStreakEvent($uId));            
 end
 
@@ -56,7 +56,7 @@ rule "Top user label"
         not $p2: Post(postOwnerId == $uId, reports >= 10, inRecent2Mins())
         not $p3: Post(postOwnerId == $uId, postLabels.contains(PostLabelEnum.HARMFUL), inRecent2Mins())
     then    
-    	System.out.println("label " + $uId); 
+    	// System.out.println("label " + $uId); 
         insert(new TopUserLabelEvent($uId));        
         $u.addLabel(UserLabelEnum.TOP_USER);
         update($u);    
@@ -67,7 +67,7 @@ rule "Revoke top user label (Spammer)"
         $u: User($uId: username, userLabels.contains(UserLabelEnum.TOP_USER), userLabels.contains(UserLabelEnum.SPAMMER))
         $e: TopUserLabelEvent(userId == $uId)
     then     
-    	System.out.println("spammer " + $uId); 
+    	// System.out.println("spammer " + $uId); 
         delete($e);
     	$u.removeLabel(UserLabelEnum.TOP_USER);
     	update($u);        
@@ -81,7 +81,7 @@ rule "Revoke top user label (Poor Content post)"
         $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
         $e2: TopUserLabelEvent(userId == $uId)
     then             
-    	System.out.println("poor"); 
+    	// System.out.println("poor"); 
     	delete($e2);
     	$u.removeLabel(UserLabelEnum.TOP_USER);
     	update($u);        
@@ -95,7 +95,7 @@ rule "Revoke top user label (Potentially harmful post)"
         $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
         $e2: TopUserLabelEvent(userId == $uId)
     then      
-    	System.out.println("pot harm " + $uId);      
+    	// System.out.println("pot harm " + $uId);      
     	delete($e2);  
     	$u.removeLabel(UserLabelEnum.TOP_USER);
     	update($u);        
@@ -109,7 +109,7 @@ rule "Revoke top user label (Harmful post)"
         $u: User(username == $uId, userLabels.contains(UserLabelEnum.TOP_USER))
         $e2: TopUserLabelEvent(userId == $uId)
     then  
-    	System.out.println("harm " + $uId);            
+    	// System.out.println("harm " + $uId);            
     	delete($e2);   
     	$u.removeLabel(UserLabelEnum.TOP_USER);
     	update($u);        
@@ -122,7 +122,7 @@ rule "Revoke top user label (No posts in past 30s)"
         	over window:time(30s)
          $e2: TopUserLabelEvent(userId == $uId)
     then     
-    	System.out.println("no activity " + $uId); 
+    	// System.out.println("no activity " + $uId); 
     	delete($e2);          
     	$u.removeLabel(UserLabelEnum.TOP_USER);
     	update($u);        

@@ -7,6 +7,10 @@ import org.kie.api.definition.type.Expires;
 import org.kie.api.definition.type.Role;
 import org.kie.api.definition.type.Timestamp;
 
+import forum.model.Post;
+import forum.model.PostLabelEnum;
+import forum.repository.PostRepository;
+
 @Role(Role.Type.EVENT)
 @Timestamp("executionTime")
 @Expires("24h")
@@ -55,5 +59,10 @@ public class DislikePostEvent implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}		
+	
+	public boolean isJustified() {
+		Post post = PostRepository.getInstance().getPostById(postId);
+		return (post.getPostLabels().contains(PostLabelEnum.POOR_CONTENT) || post.getPostLabels().contains(PostLabelEnum.HARMFUL));
+	}
 
 }

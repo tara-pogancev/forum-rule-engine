@@ -25,25 +25,110 @@ import forum.event.label.TrendingPostLabelEvent;
 import forum.event.label.PoorContentPostLabelEvent;
 import forum.event.label.PotentiallyHarmfulPostLabelEvent;
 import forum.event.label.HarmfulPostLabelEvent;
-/*
+
 rule "Dislike/report activity is 50% or more in the past 24h"
+	salience 9
+	lock-on-active 
     when              
-        $u: User(username == $uId, !userLabels.contains(UserLabelEnum.POTENTIAL_SPAMMER), !userLabels.contains(UserLabelEnum.SPAMMER))
-        $allActivity = Number() from accumulate(
+        $u: User($uId: username, !userLabels.contains(UserLabelEnum.POTENTIAL_SPAMMER), !userLabels.contains(UserLabelEnum.SPAMMER))
+        $allActivity: Number(intValue >= 30) from accumulate(
             $e1: DefaultUserActionEvent(userId == $uId) 
-            	over window:time[24h],
+            	over window:time(24h),
+            count($e1)
+        )
+        $reports: Number() from accumulate(
+            $e2: ReportPostEvent(userId == $uId) 
+            	over window:time(24h),
             count($e2)
         )
-        Number( this >= 0.8 * $allActivity) from accumulate(
-            $e2: ReportPostEvent(userId == $uId) 
-            	over window:time[24h],
+        $dislikes: Number() from accumulate(
             $e3: DislikePostEvent(userId == $uId) 
-            	over window:time[24h],
-            count($e2, $e3)
+            	over window:time(24h),
+            count($e3)
         )
-    then   
-    	System.out.println();
+        eval (($reports.doubleValue() + $dislikes.doubleValue()) > (0.5 * $allActivity.doubleValue()))
+    then    
     	$u.addLabel(UserLabelEnum.POTENTIAL_SPAMMER);
     	update($u);        
 end
-*/
+
+rule "Spammer (Reporting good content)"
+	salience 8
+    when              
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.POTENTIAL_SPAMMER))
+        // All actions
+        $reports1: Number() from accumulate(
+            $e1: ReportPostEvent(userId == $uId) 
+            	over window:time(24h),
+            count($e1)
+        )
+        // Justified actions
+        $reports2: Number() from accumulate(        	
+            $e3: ReportPostEvent(userId == $uId, isJustified()) 
+            	over window:time(24h),
+            count($e3)
+        )      
+        eval (($reports2.doubleValue()) < (0.8 * $reports1.doubleValue()))
+    then  
+    	$u.removeLabel(UserLabelEnum.POTENTIAL_SPAMMER);
+    	insert(new SpammerUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.SPAMMER);
+    	update($u);        
+end
+
+rule "Spammer (Disliking good content)"
+	salience 7
+    when              
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.POTENTIAL_SPAMMER))
+        // All actions
+        $dislikes1: Number() from accumulate(
+            $e2: DislikePostEvent(userId == $uId) 
+            	over window:time(24h),
+            count($e2)
+        )
+        // Justified actions
+        $dislikes2: Number() from accumulate(
+            $e4: DislikePostEvent(userId == $uId, isJustified())  
+            	over window:time(24h),
+            count($e4)
+        )
+        eval (($dislikes2.doubleValue()) < (0.8 * $dislikes1.doubleValue()))
+    then   
+    	$u.removeLabel(UserLabelEnum.POTENTIAL_SPAMMER);
+    	insert(new SpammerUserLabelEvent($uId));
+    	$u.addLabel(UserLabelEnum.SPAMMER);
+    	update($u);           
+end
+
+rule "Revoke potential spammer (Justified behaviour)"
+	salience 6
+    when              
+        $u: User($uId: username, userLabels.contains(UserLabelEnum.POTENTIAL_SPAMMER))
+        // All actions
+        $reports1: Number() from accumulate(
+            $e1: ReportPostEvent(userId == $uId) 
+            	over window:time(24h),
+            count($e1)
+        )
+        $dislikes1: Number() from accumulate(
+            $e2: DislikePostEvent(userId == $uId) 
+            	over window:time(24h),
+            count($e2)
+        )
+        // Justified actions
+        $reports2: Number() from accumulate(        	
+            $e3: ReportPostEvent(userId == $uId, isJustified()) 
+            	over window:time(24h),
+            count($e3)
+        )
+        $dislikes2: Number() from accumulate(
+            $e4: DislikePostEvent(userId == $uId, isJustified())  
+            	over window:time(24h),
+            count($e4)
+        )
+        eval (($reports2.doubleValue()) >= (0.8 * $reports1.doubleValue()))
+        eval (($dislikes2.doubleValue()) >= (0.8 * $dislikes1.doubleValue()))
+    then   
+    	$u.removeLabel(UserLabelEnum.POTENTIAL_SPAMMER);
+    	update($u);        
+end
