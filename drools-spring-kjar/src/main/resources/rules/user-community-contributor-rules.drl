@@ -47,7 +47,7 @@ rule "Community contributor label"
         not $e1: CommunityContributorUserLabelEvent(userId == $uId)      
         Number(intValue >= 3) from accumulate(
             $e2: CommunityContributorStreakEvent(userId == $uId)
-            	over window:time(4m),
+            	over window:time(3m),
            	count($e2)
         )        
     then     
@@ -65,7 +65,9 @@ rule "Revoke community contributor label (Not enough quality likes in the past m
             $e2: LikeQualityPostEvent(userId == $uId)
             	over window:time(1m),
            	count($e2)
-        )
+        )        
+        not $e3: CommunityContributorStreakEvent(userId == $uId)    
+        		over window:time(1m)   
     then     
     	System.out.println("Revoke community contributor label (Not enough quality likes in the past minute): " + $uId);
         delete($e1);

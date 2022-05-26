@@ -61,16 +61,16 @@ rule "Revoke temporarily suspended label (Timeout)"
     	update($u);        
 end
 
-rule "Suspended user (5x spammer)"
+rule "Suspended user (3x spammer)"
     when        
         $u: User($uId: username, userLabels.contains(UserLabelEnum.SPAMMER), !userLabels.contains(UserLabelEnum.SUSPENDED))            
         not $e1: SuspendedUserLabelEvent(userId == $uId)
-        Number(intValue >= 5) from accumulate (
+        Number(intValue >= 3) from accumulate (
         	$e2: TemporarilySuspendedUserLabelEvent(userId == $uId),
         	count($e2)
         )
     then    
-    	System.out.println("Suspended user (5x spammer): " + $uId);  
+    	System.out.println("Suspended user (3x spammer): " + $uId);  
         insert(new SuspendedUserLabelEvent($uId));
     	$u.addLabel(UserLabelEnum.SUSPENDED);
     	update($u);        
