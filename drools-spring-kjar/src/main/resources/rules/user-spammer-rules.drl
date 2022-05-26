@@ -31,7 +31,7 @@ rule "Spammer user label (Too many actions)"
         $d1: DefaultUserActionEvent($uId: userId)   
         	over window:time(1m)         
         $u: User(username == $uId, !userLabels.contains(UserLabelEnum.SPAMMER))
-        Number(intValue >= 45) from accumulate(
+        Number(intValue >= 30) from accumulate(
             $d2: DefaultUserActionEvent(
             	userId == $uId, 
                 this meets[1m] $d1),

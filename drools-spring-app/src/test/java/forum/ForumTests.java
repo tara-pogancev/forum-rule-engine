@@ -219,14 +219,13 @@ public class ForumTests {
 	    SessionPseudoClock clock = kieSession.getSessionClock();
 	    Integer ruleFireCount = 0;
 	    
-	    clock.advanceTime(2, TimeUnit.HOURS);
+	    clock.advanceTime(24, TimeUnit.HOURS);
 	    ruleFireCount = kieSession.fireAllRules();
 	    
 		for (int i = 0; i < 30; i++) {
-			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));		
+			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(3).getPostId()));		
+			ruleFireCount = kieSession.fireAllRules();
 		}
-		
-		ruleFireCount = kieSession.fireAllRules();
 
 		boolean hasSpammer = userRepository.getUserById("Zack").getUserLabels().contains(UserLabelEnum.SPAMMER);
 		assertThat(hasSpammer, equalTo(true));
@@ -252,7 +251,7 @@ public class ForumTests {
 	    SessionPseudoClock clock = kieSession.getSessionClock();
 	    Integer ruleFireCount = 0;
 	    
-	    clock.advanceTime(2, TimeUnit.HOURS);
+	    clock.advanceTime(24, TimeUnit.HOURS);
 	    ruleFireCount = kieSession.fireAllRules();
 	    
 		for (int i = 0; i < 10; i++) {
@@ -307,7 +306,7 @@ public class ForumTests {
 	
 	@Test
     public void i_PoorContent() {
-		System.out.println("\n--- Spammer&Suspension: reporting good content");	
+		System.out.println("\n--- Poor content");	
 	    UserRepository userRepository = UserRepository.getInstance();
 	    PostRepository postRepository = PostRepository.getInstance();
 	    KieSession kieSession = KieSessionSingleton.getInstance();		
@@ -338,6 +337,119 @@ public class ForumTests {
 			
 		isPoorContent = post.getPostLabels().contains(PostLabelEnum.POOR_CONTENT);
 		assertThat(isPoorContent, equalTo(true));
+    }
+	
+	@Test
+    public void j_TrendingContent() {
+		System.out.println("\n--- Trending content");	
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+	    SessionPseudoClock clock = kieSession.getSessionClock();
+	    Integer ruleFireCount = 0;
+	    
+	    clock.advanceTime(24, TimeUnit.HOURS);
+	    ruleFireCount = kieSession.fireAllRules();
+	    
+	    Post post = new Post("Sephiroth", "trending content");
+		postRepository.create(post); 
+		post.setPostId("trendingContent");
+		kieSession.insert(post);
+		kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));		
+	    
+		for (int i = 0; i < 10; i++) {
+			kieSession.insert(new LikePostEvent("Zack", post.getPostId()));		
+			
+		}
+		
+		ruleFireCount = kieSession.fireAllRules();
+		boolean isTrendingContent = post.getPostLabels().contains(PostLabelEnum.TRENDING);
+		assertThat(isTrendingContent, equalTo(true));
+		
+		for (int i = 0; i < 7; i++) {
+			kieSession.insert(new DislikePostEvent("Zack", post.getPostId()));				
+		}
+			
+		ruleFireCount = kieSession.fireAllRules();
+		isTrendingContent = post.getPostLabels().contains(PostLabelEnum.TRENDING);
+		assertThat(isTrendingContent, equalTo(false));
+		
+		for (int i = 0; i < 5; i++) {
+			kieSession.insert(new LikePostEvent("Zack", post.getPostId()));		
+			
+		}
+		
+		ruleFireCount = kieSession.fireAllRules();
+		isTrendingContent = post.getPostLabels().contains(PostLabelEnum.TRENDING);
+		assertThat(isTrendingContent, equalTo(true));
+		
+		clock.advanceTime(10, TimeUnit.MINUTES);
+		ruleFireCount = kieSession.fireAllRules();
+		isTrendingContent = post.getPostLabels().contains(PostLabelEnum.TRENDING);
+		assertThat(isTrendingContent, equalTo(false));
+    }
+	
+	@Test
+    public void k_SpammerAfterTopUser() {
+		System.out.println("\n--- Spammer after top user");	
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+	    SessionPseudoClock clock = kieSession.getSessionClock();
+	    Integer ruleFireCount = 0;
+	    
+	    clock.advanceTime(24, TimeUnit.HOURS);
+	    ruleFireCount = kieSession.fireAllRules();
+	      
+		for (int i = 0; i < 4; i++) {
+			clock.advanceTime(30, TimeUnit.SECONDS);
+			ruleFireCount = kieSession.fireAllRules();
+			Post post = new Post("Cloud", "Lorem Ipsum...");
+			postRepository.create(post); 
+			post.setPostId("spammerAfterTopUserAndHarmfulPost" + i);
+			kieSession.insert(post);
+			kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
+			ruleFireCount = kieSession.fireAllRules();
+		}
+			
+		ruleFireCount = kieSession.fireAllRules();
+		boolean topUserLabel = userRepository.getUserById("Cloud").getUserLabels().contains(UserLabelEnum.TOP_USER);
+		assertThat(topUserLabel, equalTo(true));
+		
+		for (int i = 0; i < 30; i++) {
+			kieSession.insert(new LikePostEvent("Cloud", postRepository.getAllPosts().get(1).getPostId()));
+			ruleFireCount = kieSession.fireAllRules();
+		}		
+		
+		topUserLabel = userRepository.getUserById("Cloud").getUserLabels().contains(UserLabelEnum.TOP_USER);
+		assertThat(topUserLabel, equalTo(false));
+		
+		boolean spammerLabel = userRepository.getUserById("Cloud").getUserLabels().contains(UserLabelEnum.SPAMMER);
+		assertThat(spammerLabel, equalTo(true));
+    }
+	
+	@Test
+    public void l_SpammerAfterHarmfulPost() {
+		System.out.println("\n--- Spammer after harmful post");	
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+	    SessionPseudoClock clock = kieSession.getSessionClock();
+	    Integer ruleFireCount = 0;
+	    
+	    clock.advanceTime(24, TimeUnit.HOURS);
+	    ruleFireCount = kieSession.fireAllRules();
+	  		
+		for (int i = 0; i < 30; i++) {
+			kieSession.insert(new LikePostEvent("Angeal", postRepository.getAllPosts().get(5).getPostId()));
+			ruleFireCount = kieSession.fireAllRules();
+		}		
+
+		boolean spammerLabel = userRepository.getUserById("Angeal").getUserLabels().contains(UserLabelEnum.SPAMMER);
+		assertThat(spammerLabel, equalTo(true));
+		
+		boolean suspendedLabel = userRepository.getUserById("Angeal").getUserLabels().contains(UserLabelEnum.SUSPENDED);
+		assertThat(suspendedLabel, equalTo(true));
     }
 	
 }
