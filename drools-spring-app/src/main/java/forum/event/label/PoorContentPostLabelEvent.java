@@ -8,11 +8,9 @@ import org.kie.api.definition.type.Role;
 import org.kie.api.definition.type.Timestamp;
 
 @Role(Role.Type.EVENT)
-@Timestamp("executionTime")
 public class PoorContentPostLabelEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-    private Date executionTime;
     private String postId;
     
 	public PoorContentPostLabelEvent() {
@@ -22,16 +20,7 @@ public class PoorContentPostLabelEvent implements Serializable {
 	public PoorContentPostLabelEvent(String postId) {
 		super();
 		this.postId = postId;
-		this.executionTime = new Date();
 	}    
-
-	public Date getExecutionTime() {
-		return executionTime;
-	}
-
-	public void setExecutionTime(Date executionTime) {
-		this.executionTime = executionTime;
-	}
 
 	public String getPostId() {
 		return postId;

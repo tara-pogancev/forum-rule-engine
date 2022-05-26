@@ -12,12 +12,10 @@ import forum.model.PostLabelEnum;
 import forum.repository.PostRepository;
 
 @Role(Role.Type.EVENT)
-@Timestamp("executionTime")
 @Expires("24h")
 public class DislikePostEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-    private Date executionTime;
     private String userId;
     private String postId;
     
@@ -29,16 +27,7 @@ public class DislikePostEvent implements Serializable {
 		super();
 		this.userId = userId;
 		this.postId = postId;
-		this.executionTime = new Date();
 	}    
-
-	public Date getExecutionTime() {
-		return executionTime;
-	}
-
-	public void setExecutionTime(Date executionTime) {
-		this.executionTime = executionTime;
-	}
 
 	public String getUserId() {
 		return userId;

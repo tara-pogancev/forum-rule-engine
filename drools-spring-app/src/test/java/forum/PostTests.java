@@ -59,7 +59,7 @@ public class PostTests {
 	    KieSession kieSession = KieSessionSingleton.getInstance();		
 		assertThat(kieSession.getFactCount(), equalTo(10L));
 	}		
-/*
+
 	@Test
     public void topUserLabel() {
 		System.out.println("--------------------------------------------");	
@@ -70,24 +70,25 @@ public class PostTests {
 	    Integer ruleFireCount = 0;
 	      
 		for (int i = 0; i < 3; i++) {
-			Post post = new Post("Angeal", "Lorem Ipsum...");
+			Post post = new Post("Zack", "Lorem Ipsum...");
 			postRepository.create(post); 
 			post.setPostId("topUserLabel" + i);
 			kieSession.insert(post);
 			kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
 			ruleFireCount = kieSession.fireAllRules();
 			assertThat(ruleFireCount, equalTo(1));
+			clock.advanceTime(30, TimeUnit.SECONDS);
 			ruleFireCount = kieSession.fireAllRules();
 		}
 		
-		Post post = new Post("Angeal", "Lorem Ipsum...");
+		Post post = new Post("Zack", "Lorem Ipsum...");
 		postRepository.create(post); 
 		kieSession.insert(post);
 		kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
 		ruleFireCount = kieSession.fireAllRules();
 		assertThat(ruleFireCount, equalTo(2));
     }
-	*/
+	
 	@Test
     public void harmfulPostFalse() {
 		System.out.println("--------------------------------------------");	
