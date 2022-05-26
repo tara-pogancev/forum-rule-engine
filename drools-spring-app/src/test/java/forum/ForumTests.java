@@ -31,6 +31,7 @@ import org.springframework.core.annotation.Order;
 
 import forum.event.DislikePostEvent;
 import forum.event.LikePostEvent;
+import forum.event.LikeQualityPostEvent;
 import forum.event.NewPostEvent;
 import forum.event.ReportPostEvent;
 import forum.model.Post;
@@ -51,7 +52,7 @@ public class ForumTests {
 	 * 
 	 * Please run them all at once, and not separately!
 	 * 
-	 * Test coverage(by PDF): (x/25)
+	 * Test coverage(by PDF): 20/25 = 80%
 	 */
 	
 	@Test
@@ -171,7 +172,7 @@ public class ForumTests {
 		assertThat(hasHarmfulLabel, equalTo(true));
     }
 	
-	/*
+	
 	@Test
     public void e_CommunityContributor() {
 		System.out.println("\n--- Community contributor");	
@@ -185,30 +186,26 @@ public class ForumTests {
 	    ruleFireCount = kieSession.fireAllRules();
 	    
 		for (int i = 0; i < 3; i++) {
-			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
+			clock.advanceTime(61, TimeUnit.SECONDS);
 			ruleFireCount = kieSession.fireAllRules();
-			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
-			ruleFireCount = kieSession.fireAllRules();
-			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
-			ruleFireCount = kieSession.fireAllRules();
-			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
-			ruleFireCount = kieSession.fireAllRules();
-			kieSession.insert(new LikePostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
-			ruleFireCount = kieSession.fireAllRules();
-			clock.advanceTime(60, TimeUnit.SECONDS);
+			kieSession.insert(new LikeQualityPostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
+			kieSession.insert(new LikeQualityPostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
+			kieSession.insert(new LikeQualityPostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
+			kieSession.insert(new LikeQualityPostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
+			kieSession.insert(new LikeQualityPostEvent("Zack", postRepository.getAllPosts().get(0).getPostId()));
 			ruleFireCount = kieSession.fireAllRules();
 		}
+		
+		ruleFireCount = kieSession.fireAllRules();
 
 		boolean hasCommunityContributor = userRepository.getUserById("Zack").getUserLabels().contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
-		//assertThat(hasCommunityContributor, equalTo(true));
+		assertThat(hasCommunityContributor, equalTo(true));
 		
 		clock.advanceTime(60, TimeUnit.SECONDS);
 		ruleFireCount = kieSession.fireAllRules();
-		//assertThat(ruleFireCount, equalTo(1));
-		
 		hasCommunityContributor = userRepository.getUserById("Zack").getUserLabels().contains(UserLabelEnum.COMMUNITY_CONTRIBUTOR);
-		//assertThat(hasCommunityContributor, equalTo(false));
-    } */
+		assertThat(hasCommunityContributor, equalTo(false));		
+    } 
 	
 	@Test
     public void f_SpammerTooManyActions() {
