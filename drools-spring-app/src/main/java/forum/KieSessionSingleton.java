@@ -1,15 +1,9 @@
 package forum;
 
-import org.drools.core.ClockType;
 import org.kie.api.KieBase;
-import org.kie.api.KieBaseConfiguration;
-import org.kie.api.KieServices;
-import org.kie.api.conf.EventProcessingOption;
 import org.kie.api.event.rule.AgendaEventListener;
-import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
-import org.kie.api.runtime.conf.ClockTypeOption;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +28,5 @@ public class KieSessionSingleton {
 			KieSessionSingleton.instance.removeEventListener(listener);
 		}
 	}
-
 
 }

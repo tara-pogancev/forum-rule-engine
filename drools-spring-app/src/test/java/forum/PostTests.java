@@ -32,68 +32,117 @@ import forum.event.NewPostEvent;
 import forum.event.ReportPostEvent;
 import forum.model.Post;
 import forum.model.RulesResponse;
+import forum.model.UserLabelEnum;
 import forum.repository.PostRepository;
 import forum.repository.UserRepository;
 
+@SuppressWarnings("unused")
 public class PostTests {
 	
-	private KieSession getKieSession() {
-		System.out.println("Initting...");
+	@Test
+	public void kieConfig() {	
+		System.out.println("--------------------------------------------");
 		KieServices ks = KieServices.Factory.get();		
 		KieContainer kContainer = ks
 				.newKieContainer(ks.newReleaseId("forum", "drools-spring-kjar", "0.0.1-SNAPSHOT"));		
-//        KieFileSystem kfs = ks.newKieFileSystem();
-//		KieBuilder kbuilder = ks.newKieBuilder(kfs);
-//        kbuilder.buildAll();
-//        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
-//            throw new IllegalArgumentException("Coudln't build knowledge module" + kbuilder.getResults());
-//        }
-//        KieContainer kContainer = ks.newKieContainer(kbuilder.getKieModule().getReleaseId());
-//		KieScanner kScanner = ks.newKieScanner(kContainer);
-//		kScanner.start(10_000);
+		KieScanner kScanner = ks.newKieScanner(kContainer);
+		kScanner.start(10_000);
 		KieBaseConfiguration kbconf = ks.newKieBaseConfiguration();
 		kbconf.setOption(EventProcessingOption.STREAM);
 		KieBase kbase = kContainer.newKieBase(kbconf);
 		KieSessionConfiguration ksconf = ks.newKieSessionConfiguration();
-        ksconf.setOption(ClockTypeOption.get(ClockType.PSEUDO_CLOCK.getId()));
+		ksconf.setOption(ClockTypeOption.get(ClockType.PSEUDO_CLOCK.getId()));
 		new KieSessionSingleton(kbase, ksconf);
-		return KieSessionSingleton.getInstance();
+			
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+		assertThat(kieSession.getFactCount(), equalTo(10L));
+	}		
+/*
+	@Test
+    public void topUserLabel() {
+		System.out.println("--------------------------------------------");	
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+	    SessionPseudoClock clock = kieSession.getSessionClock();
+	    Integer ruleFireCount = 0;
+	      
+		for (int i = 0; i < 3; i++) {
+			Post post = new Post("Angeal", "Lorem Ipsum...");
+			postRepository.create(post); 
+			post.setPostId("topUserLabel" + i);
+			kieSession.insert(post);
+			kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
+			ruleFireCount = kieSession.fireAllRules();
+			assertThat(ruleFireCount, equalTo(1));
+			ruleFireCount = kieSession.fireAllRules();
+		}
 		
-	}
-	
-	
-    @Test
-    public void harmfulPostWithAnalisysTest() {
-    	KieSession kieSession = getKieSession();
-    	SessionPseudoClock clock = kieSession.getSessionClock();
-    	Integer ruleFireCount = 0;
-    	
-    	System.out.println("--------------------------------------------------");
-		
-    	UserRepository userRepository = UserRepository.getInstance();
-    	PostRepository postRepository = PostRepository.getInstance();
-
-		Post post = new Post("Zack", "harm");
-		//postRepository.create(post); 
+		Post post = new Post("Angeal", "Lorem Ipsum...");
+		postRepository.create(post); 
 		kieSession.insert(post);
 		kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
-		kieSession.fireAllRules();
-		clock.advanceTime(1, TimeUnit.SECONDS);
-		
+		ruleFireCount = kieSession.fireAllRules();
+		assertThat(ruleFireCount, equalTo(2));
+    }
+	*/
+	@Test
+    public void harmfulPostFalse() {
+		System.out.println("--------------------------------------------");	
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+	    SessionPseudoClock clock = kieSession.getSessionClock();
+	    Integer ruleFireCount = 0;
+	    
+	    Post post = new Post("Angeal", "good content");
+		postRepository.create(post); 
+		post.setPostId("harmfulPostFalse");
+		kieSession.insert(post);
+		kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
+		ruleFireCount = kieSession.fireAllRules();
+	      
 		for (int i = 0; i < 9; i++) {
-			System.out.println("hi1");
 			kieSession.insert(new ReportPostEvent("Zack", post.getPostId()));
-			kieSession.fireAllRules();
-			System.out.println("hi2");
-			clock.advanceTime(1, TimeUnit.SECONDS);
+			ruleFireCount = kieSession.fireAllRules();
+			assertThat(ruleFireCount, equalTo(1));
 		}
-
+		
+		kieSession.insert(new ReportPostEvent("Zack", post.getPostId()));
+		ruleFireCount = kieSession.fireAllRules();
+		assertThat(ruleFireCount, equalTo(3));
+    }
+	
+	@Test
+    public void harmfulPostTrue() {
+		System.out.println("--------------------------------------------");	
+	    UserRepository userRepository = UserRepository.getInstance();
+	    PostRepository postRepository = PostRepository.getInstance();
+	    KieSession kieSession = KieSessionSingleton.getInstance();		
+	    SessionPseudoClock clock = kieSession.getSessionClock();
+	    Integer ruleFireCount = 0;
+	    
+	    Post post = new Post("Angeal", "harm!!!");
+		postRepository.create(post); 
+		post.setPostId("harmfulPostTrue");
+		kieSession.insert(post);
+		kieSession.insert(new NewPostEvent(post.getPostOwnerId(), post.getPostId()));
+		ruleFireCount = kieSession.fireAllRules();
+	      
+		for (int i = 0; i < 9; i++) {
+			kieSession.insert(new ReportPostEvent("Zack", post.getPostId()));
+			ruleFireCount = kieSession.fireAllRules();
+			assertThat(ruleFireCount, equalTo(1));
+		}
+		
 		kieSession.insert(new ReportPostEvent("Zack", post.getPostId()));
 		ruleFireCount = kieSession.fireAllRules();
 		assertThat(ruleFireCount, equalTo(5));
 		
-		kieSession.destroy();
+		boolean hasHarmfulLabel = userRepository.getUserById("Angeal").getUserLabels().contains(UserLabelEnum.HARMFUL_USER);
+		assertThat(hasHarmfulLabel, equalTo(true));
     }
-    
-
+	
 }

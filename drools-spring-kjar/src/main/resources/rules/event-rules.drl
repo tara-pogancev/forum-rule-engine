@@ -29,6 +29,7 @@ import forum.event.label.HarmfulPostLabelEvent;
 rule "Post like"
 	salience 10
 	lock-on-active
+	no-loop
     when        
         $e: LikePostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
@@ -42,6 +43,7 @@ end
 rule "Post dislike"
 	salience 10
 	lock-on-active
+	no-loop
     when        
         $e: DislikePostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
@@ -55,6 +57,7 @@ end
 rule "Post report"
 	salience 10
 	lock-on-active
+	no-loop
     when        
         $e: ReportPostEvent($pId: postId, $uId: userId)            
         $p: Post(postId == $pId)
